@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Text2D.h" 
 #include "Model.h"
+#include "App.h"
 
 using namespace DirectX;
 
@@ -200,65 +201,73 @@ XMFLOAT2 GetMouseMovement();
 //WinMain is the entry point of the program 
 //Init everything and goes into a message processing loop
 //Idle time is used to render the scene 
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
+int WINAPI WinMain(
+    _In_ HINSTANCE hInstance, 
+    _In_opt_ HINSTANCE hPrevInstance, 
+    _In_ LPSTR lpCmdLine, 
+    _In_ int nCmdShow)
 {
-    //macro that simply stops compiler warnings about unused variables.
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+    App app; 
 
-    if (FAILED(InitWindow(hInstance, nCmdShow)))
-    {
-        DXTRACE_MSG("Failed to create Window");
-        return 0;
-    }
+    return app.Loop();
 
-    //Init input
-    if (FAILED(InitInput()))
-    {
-        DXTRACE_MSG("Failed to create input device");
-        return 0;
-    }
+    ////macro that simply stops compiler warnings about unused variables.
+    //UNREFERENCED_PARAMETER(hPrevInstance);
+    //UNREFERENCED_PARAMETER(lpCmdLine);
 
-    //Main message loop
-    MSG msg = { 0 };
+    //if (FAILED(InitWindow(hInstance, nCmdShow)))
+    //{
+    //    DXTRACE_MSG("Failed to create Window");
+    //    return 0;
+    //}
 
-    //Direct3D init
-    if (FAILED(InitD3D()))
-    {
-        DXTRACE_MSG("Failed to create D3D Device");
-        return 0;
-    }
+    ////Init input
+    //if (FAILED(InitInput()))
+    //{
+    //    DXTRACE_MSG("Failed to create input device");
+    //    return 0;
+    //}
 
-    if (FAILED(InitGraphics()))
-    {
-        DXTRACE_MSG("Failed to initialise graphics");
-        return 0;
-    }
+    ////Main message loop
+    //MSG msg = { 0 };
 
-    while (msg.message != WM_QUIT)
-    {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))   //Looks for messages
-        {
-            //TranslateMessage will post auxilliary WM_CHAR messages from key msgs
-            //translates virtual-key messages into characters (WM_CHAR) (basically sends a WM_CHAR messages when pressing a key, so it can also be omitted if not using that message)
-            TranslateMessage(&msg);		//https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-translatemessage
+    ////Direct3D init
+    //if (FAILED(InitD3D()))
+    //{
+    //    DXTRACE_MSG("Failed to create D3D Device");
+    //    return 0;
+    //}
 
-            //Pass msg to the WndProc 
-            //DefWindowProc doesn't know whether we want to quit the whole application or 
-            //we just close the window, so when closing the app will still run
-            DispatchMessage(&msg);		//https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-dispatchmessage
-        }
-        else
-        {
-            //Do something 
-            RenderFrame();
-        }
-    }
+    //if (FAILED(InitGraphics()))
+    //{
+    //    DXTRACE_MSG("Failed to initialise graphics");
+    //    return 0;
+    //}
 
-    //Direct3D cleanup
-    ShutdownD3D();
+    //while (msg.message != WM_QUIT)
+    //{
+    //    if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))   //Looks for messages
+    //    {
+    //        //TranslateMessage will post auxilliary WM_CHAR messages from key msgs
+    //        //translates virtual-key messages into characters (WM_CHAR) (basically sends a WM_CHAR messages when pressing a key, so it can also be omitted if not using that message)
+    //        TranslateMessage(&msg);		//https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-translatemessage
 
-    return (int)msg.wParam;
+    //        //Pass msg to the WndProc 
+    //        //DefWindowProc doesn't know whether we want to quit the whole application or 
+    //        //we just close the window, so when closing the app will still run
+    //        DispatchMessage(&msg);		//https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-dispatchmessage
+    //    }
+    //    else
+    //    {
+    //        //Do something 
+    //        RenderFrame();
+    //    }
+    //}
+
+    ////Direct3D cleanup
+    //ShutdownD3D();
+
+    //return (int)msg.wParam;
 }
 
 //Register class and create window 

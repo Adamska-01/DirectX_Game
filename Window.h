@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <string>
 #include <optional>
+#include "Graphics.h"
 
 class Window
 {
@@ -28,6 +29,9 @@ public:
 
 	static std::optional<int> ProcessMessages();	//static because should process msgs for all windows
 
+public: 
+	Graphics* GetGraphics();
+
 private: //Enables wnd msg as a member function 
 	static LRESULT CALLBACK HandleMsgSetup(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);
 	static LRESULT CALLBACK HandleMsgSecond(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);
@@ -37,6 +41,8 @@ private:
 	int width;
 	int height;
 	HWND hWnd;
+
+	Graphics* gfx;
 };
 
  

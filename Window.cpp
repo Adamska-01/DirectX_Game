@@ -27,7 +27,7 @@ Window::WindowClass::WindowClass()
 }
 
 Window::WindowClass::~WindowClass()
-{
+{ 
     UnregisterClass(wndClassName, GetInstance());
 }
 
@@ -72,10 +72,18 @@ Window::Window(int _width, int _height, std::string _name)
 
     //Display window
     ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+    //Init Graphics 
+    gfx = new Graphics(hWnd);
 }
 
 Window::~Window()
 {
+    if (gfx != nullptr)
+    {
+        delete gfx;
+        gfx = nullptr;
+    }
     DestroyWindow(hWnd);
 }
 
@@ -110,6 +118,11 @@ std::optional<int> Window::ProcessMessages()
 
     // return empty optional when not quitting app
     return {};
+}
+
+Graphics* Window::GetGraphics()
+{
+    return gfx;
 }
 
 LRESULT WINAPI Window::HandleMsgSetup(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam)

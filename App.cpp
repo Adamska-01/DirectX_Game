@@ -29,4 +29,12 @@ int App::Loop()
 
 void App::Update()
 {
+    timer.StartClock();
+    i += 0.02f;
+    const float c = sin(i) / 2.0f + 0.5f;
+    wnd->GetGraphics()->ClearFrame(c, c, 1.0f);
+    wnd->GetGraphics()->RenderFrame();
+
+    timer.EndClock();
+    timer.DelayByFrameTime();
 }

@@ -16,12 +16,20 @@ public:
 private:
 	HRESULT CreateSwapChain(HWND hWnd);
 	HRESULT CreateBackBuffer();
+	HRESULT CreateZBuffer(HWND hWnd); 
+	HRESULT CreateBlendStates();
+	void CreateViewPort(HWND hWnd);
 
 private: 
 	ID3D11Device* pDevice = nullptr;
 	IDXGISwapChain* pSwapChain = nullptr;
 	ID3D11DeviceContext* pImmediateContext = nullptr;
 	ID3D11RenderTargetView* pBackBufferRTView = nullptr;
+	ID3D11DepthStencilView* pZBuffer = nullptr;
+
+	//Blend states 
+	ID3D11BlendState* pAlphaBlendEnable;
+	ID3D11BlendState* pAlphaBlendDisable;
 
 	D3D_DRIVER_TYPE driverType = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;

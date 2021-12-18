@@ -44,8 +44,13 @@ Graphics::~Graphics()
 
 void Graphics::ClearFrame(float _r, float _g, float _b)
 {
+    //Clear back buffer
     const float colour[] = { _r, _g, _b, 1.0f };
     pImmediateContext->ClearRenderTargetView(pBackBufferRTView, colour);
+
+    //Clear the Z buffer
+    pImmediateContext->ClearDepthStencilView(pZBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Graphics::RenderFrame()

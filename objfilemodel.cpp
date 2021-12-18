@@ -278,7 +278,7 @@ bool ObjFileModel::createVB()
 ObjFileModel::~ObjFileModel()
 {
 	// clean up memory used by object
-	if(pVertexBuffer) pVertexBuffer->Release();
+	if(pVertexBuffer) pVertexBuffer->Release();  
 
 	delete [] vertices;
 

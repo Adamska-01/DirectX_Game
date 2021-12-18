@@ -927,22 +927,22 @@ HRESULT InitGraphics()
     camera->SetProjectionValues(90.0f, static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.01f, 1000.0f);
 
     //Model
-    pObject.push_back(new Model(pD3DDevice, pImmediateContext));
-    pObject[0]->LoadObjModel("Assets/Sphere.obj", "ReflectVS", "ReflectPS");
-    pObject[0]->AddTexture("Assets/City.dds");
-    pObject[0]->Scale(0.2f, 0.2f, 0.2f);
+    //pObject.push_back(new Model(pD3DDevice, pImmediateContext));
+    //pObject[0]->LoadObjModel("Assets/Sphere.obj", "ReflectVS", "ReflectPS");
+    //pObject[0]->SetTexture("Assets/City.dds");
+    //pObject[0]->Scale(0.2f, 0.2f, 0.2f);
 
-    pObject.push_back(new Model(pD3DDevice, pImmediateContext));
-    pObject[1]->LoadObjModel("Assets/PointySphere.obj");
-    pObject[1]->AddTexture("Assets/Helm_BaseColor.png");
-    pObject[1]->SetPosition(0.0f, 0.0f, 8.0f);
-    pObject[1]->Scale(0.5f, 0.5f, 0.5f);
+    //pObject.push_back(new Model(pD3DDevice, pImmediateContext));
+    //pObject[1]->LoadObjModel("Assets/PointySphere.obj");
+    //pObject[1]->SetTexture("Assets/Helm_BaseColor.png");
+    //pObject[1]->SetPosition(0.0f, 0.0f, 8.0f);
+    //pObject[1]->Scale(0.5f, 0.5f, 0.5f);
 
-    //Skybox
-    pObject.push_back(new Model(pD3DDevice, pImmediateContext));
-    pObject[2]->LoadObjModel("Assets/cube.obj", "SkyBoxVS", "SkyBoxPS");
-    pObject[2]->AddTexture("Assets/City.dds");
-    pObject[2]->Scale(3.0f, 3.0f, 3.0f);
+    ////Skybox
+    //pObject.push_back(new Model(pD3DDevice, pImmediateContext));
+    //pObject[2]->LoadObjModel("Assets/cube.obj", "SkyBoxVS", "SkyBoxPS");
+    //pObject[2]->SetTexture("Assets/City.dds");
+    //pObject[2]->Scale(3.0f, 3.0f, 3.0f);
 
     //Lights
     ambientLight = new AmbientLight();

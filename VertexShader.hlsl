@@ -88,13 +88,14 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
     float diffuseAmount = dot(directionalLightVector, normal);
     diffuseAmount = saturate(diffuseAmount); //clamp
     
-    output.color = ambientLightColour + (directionalLightColour * diffuseAmount) + pointLightAtt; 
+    output.color = defaultColour;
+    //ambientLightColour + (directionalLightColour * diffuseAmount) + pointLightAtt;
   
     output.texcoord = texcoord;
     return output;
 }
  
-VOutSky SkyBoxVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 normal : NORMAL)
+VOutSky SkyBoxVS(float4 position : POSITION)
 {
     VOutSky output;
     
@@ -107,7 +108,7 @@ VOutSky SkyBoxVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 
     return output;  
 }
 
-VOutSky ReflectVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 normal : NORMAL)
+VOutSky ReflectVS(float4 position : POSITION, float3 normal : NORMAL)
 {
     VOutSky output;
 

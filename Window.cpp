@@ -49,9 +49,9 @@ Window::Window(int _width, int _height, std::string _name)
     height(height)
 {
     RECT wr;
-    wr.left = 100;
+    wr.left = 0;
     wr.right = _width + wr.left;
-    wr.top = 100;
+    wr.top = 0;
     wr.bottom = _height + wr.top;
     AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
 
@@ -118,6 +118,16 @@ std::optional<int> Window::ProcessMessages()
 
     // return empty optional when not quitting app
     return {};
+}
+
+int Window::GetWidth()
+{
+    return width;
+}
+
+int Window::GetHeight()
+{
+    return height;
 }
 
 Graphics* Window::GetGraphics()

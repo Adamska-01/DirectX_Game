@@ -3,25 +3,18 @@
 #include "AmbientLight.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
+#include "Textures.h"
+#include "Graphics.h"	
 
 class Model
 {
 private:
-	ID3D11Device* pD3DDevice = nullptr;
-	ID3D11DeviceContext* pImmediateContext = nullptr;
-	ID3D11VertexShader* pVshader = nullptr;
-	ID3D11PixelShader* pPshader = nullptr;
-	ID3D11InputLayout* pInputLayout = nullptr;
-	ID3D11Buffer* pConstantBuffer = nullptr;
-
-	//Textures
-	ID3D11ShaderResourceView* pTexture = nullptr;
-	ID3D11SamplerState* pSampler = nullptr;
-
 	struct MODEL_CONSTANT_BUFFER
 	{
 		XMMATRIX worldViewProjection;	 //64 bytes
-		XMMATRIX worldView;	 //64 bytes
+		XMMATRIX worldView;				 //64 bytes
 		XMVECTOR directionalLightVector; //16 bytes
 		XMVECTOR directionalLightColour; //16 bytes
 		XMVECTOR ambientLightColour;     //16 bytes
@@ -30,8 +23,14 @@ private:
 
 		XMFLOAT3 pointLightAttenuation;  //12 bytes
 		float range;                     //4 bytes
-	}; //Total size = 224 bytes 
+	}; //Total size = 224 bytes  
+private:
+	ID3D11Device* pD3DDevice = nullptr;
+	ID3D11DeviceContext* pImmediateContext = nullptr; 
+	ID3D11Buffer* pConstantBuffer = nullptr;
 
+	Graphics* gfx;
+	std::string vsShader, psShader, texture;  
 private:
 	ObjFileModel* pObject = nullptr;
 
@@ -47,11 +46,10 @@ private:
 	float colSphereRadius;
 
 public:
-	Model(ID3D11Device* _device, ID3D11DeviceContext* _immContext);
+	Model(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext);
 	~Model();
 
-	HRESULT LoadObjModel(std::string _filename = "", std::string _VSshader = "ModelVS", std::string _PSshader = "ModelPS");
-	HRESULT AddTexture(std::string _filename);
+	HRESULT LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture);
 	void UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight = nullptr, DirectionalLight* _dirLight = nullptr, PointLight* _pointLight = nullptr);
 	void LookAt_XYZ(float _x, float _y, float _z);
 	//Sphere collision
@@ -60,7 +58,10 @@ public:
 	XMVECTOR GetBoundingSphereWorldSpacePosition();
 	float GetBoundingSphereRadius();
 	bool CheckCollision(Model* _model);
-
+private:
+	void SetTexture(std::string _texture);
+	void SetShaders(std::string _vs, std::string _ps);
+public:
 	void Draw();
 
 	//Transformations

@@ -6,6 +6,8 @@
 
 class Graphics
 {
+	friend class Bindable;
+	friend class App;
 public:
 	Graphics(HWND hWnd);
 	~Graphics();

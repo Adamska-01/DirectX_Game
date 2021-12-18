@@ -29,6 +29,10 @@ public:
 
 	static std::optional<int> ProcessMessages();	//static because should process msgs for all windows
 
+	//Getters
+	int GetWidth();
+	int GetHeight();
+
 public: 
 	Graphics* GetGraphics();
 

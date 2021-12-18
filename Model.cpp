@@ -1,7 +1,8 @@
 #include "Model.h"
 
-Model::Model(ID3D11Device* _device, ID3D11DeviceContext* _immContext)
+Model::Model(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext)
     :
+    gfx(_gfx),
     pD3DDevice(_device),
     pImmediateContext(_immContext)
 {
@@ -11,65 +12,27 @@ Model::Model(ID3D11Device* _device, ID3D11DeviceContext* _immContext)
 
 Model::~Model()
 {
-    if (pObject != nullptr)
+    /*if (pObject != nullptr)
     {
         delete pObject;
         pObject = nullptr;
-    }
+    }*/
     //System clean up
-    //if (pSampler != nullptr) pTexture->Release();
-    if (pTexture != nullptr) pTexture->Release();
-    if (pVshader != nullptr) pVshader->Release();
-    if (pPshader != nullptr) pPshader->Release();
-    if (pInputLayout != nullptr) pInputLayout->Release();
+    //if (pSampler != nullptr) pTexture->Release(); 
     if (pConstantBuffer != nullptr) pConstantBuffer->Release();
 }
 
-HRESULT Model::LoadObjModel(std::string _filename, std::string _VSshader, std::string _PSshader)
+HRESULT Model::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture)
 {
     HRESULT hr = S_OK;
 
-    //Load new model
-    if (pObject == nullptr)
-    {
-        pObject = new ObjFileModel(_filename, pD3DDevice, pImmediateContext);
-        if (pObject->filename == "FILE NOT LOADED") return S_FALSE;
-    }
-
-
-    //Load and compile the pixel and vertex shaders - use vs_5_0 to target hardware only
-    ID3DBlob* VS, * PS, * error;
-    hr = D3DX11CompileFromFile("VertexShader.hlsl", 0, 0, _VSshader.c_str(), "vs_4_0", 0, 0, 0, &VS, &error, 0);
-    if (error != 0)
-    {
-        OutputDebugString((char*)error->GetBufferPointer());
-        error->Release();
-        if (FAILED(hr)) return hr;
-    }
-    hr = D3DX11CompileFromFile("PixelShader.hlsl", 0, 0, _PSshader.c_str(), "ps_4_0", 0, 0, 0, &PS, &error, 0);
-    if (error != 0)
-    {
-        OutputDebugString((char*)error->GetBufferPointer());
-        error->Release();
-        if (FAILED(hr)) return hr;
-    }
-    //Create shader objects 
-    hr = pD3DDevice->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVshader);
-    if (FAILED(hr)) return hr;
-    hr = pD3DDevice->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPshader);
-    if (FAILED(hr)) return hr;
-
-
-    //Create input layout
-    D3D11_INPUT_ELEMENT_DESC iedesc[] =
-    {
-        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-    };
-    hr = pD3DDevice->CreateInputLayout(iedesc, ARRAYSIZE(iedesc), VS->GetBufferPointer(), VS->GetBufferSize(), &pInputLayout);
-    if (FAILED(hr)) return hr;   
-
+    //Set shaders
+    SetShaders(_VSshader, _PSshader); 
+    //Set texture
+    SetTexture(_texture);
+    //Load model
+    pObject = _obj; 
+     
     //Set up and create constant buffer
     D3D11_BUFFER_DESC cBufDesc;
     ZeroMemory(&cBufDesc, sizeof(cBufDesc));
@@ -86,25 +49,9 @@ HRESULT Model::LoadObjModel(std::string _filename, std::string _VSshader, std::s
     return hr;
 }
 
-HRESULT Model::AddTexture(std::string _filename)
-{
-    HRESULT hr = S_OK;
-
-    //Create Texture 
-    hr = D3DX11CreateShaderResourceViewFromFile(pD3DDevice, _filename.c_str(), NULL, NULL, &pTexture, NULL);
-    if (FAILED(hr)) return hr;
-
-    //Create Sampler
-    D3D11_SAMPLER_DESC samplerDesc;
-    ZeroMemory(&samplerDesc, sizeof(samplerDesc));
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    pD3DDevice->CreateSamplerState(&samplerDesc, &pSampler);
-
-    return hr;
+void Model::SetTexture(std::string _texture)
+{ 
+    texture = _texture;
 }
 
 void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _pointLight)
@@ -236,17 +183,20 @@ bool Model::CheckCollision(Model* _model)
     return false;
 }
 
+void Model::SetShaders(std::string _vs, std::string _ps)
+{
+    vsShader = _vs;
+    psShader = _ps;
+}
+
 void Model::Draw()
 {
-    //Set shaders 
-    pImmediateContext->VSSetShader(pVshader, 0, 0);
-    pImmediateContext->PSSetShader(pPshader, 0, 0);
-    //Set sample states and texture
-    pImmediateContext->PSSetSamplers(0, 1, &pSampler);
-    pImmediateContext->PSSetShaderResources(0, 1, &pTexture);
+    //Set shaders and input layout
+    VertexShader::GetInstance()->Bind(gfx, vsShader);
+    PixelShader::GetInstance()->Bind(gfx, psShader); 
 
-    //Set input layout every frame
-    pImmediateContext->IASetInputLayout(pInputLayout);
+    //Set sample states and texture
+    Textures::GetInstance()->Bind(gfx, texture);  
 
     pObject->Draw();
 }

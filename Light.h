@@ -1,39 +1,18 @@
-#pragma once 
-#include <d3d11.h> 
-#include <dxerr.h>
-#include <DirectXMath.h> 
-#define _XM_NO_INTRINSICS_
-#define XM_NO_ALIGNMENT 
+#pragma once  
+#include "GameObject.h"
 
 using namespace DirectX;
 
-class Light
-{
-private:
-	XMVECTOR positionV;
-	XMVECTOR rotationV;
-
-protected:
-	XMFLOAT3 position;
-	XMFLOAT3 rotation;
-
+class Light : public GameObject
+{  
+protected:  
 	XMVECTOR colour;
 
 public:
 	Light();
-	~Light() {};
-
-	//Transformations
-	void Translate(const XMVECTOR _pos);
-	void Translate(float _x, float _y, float _z);
-	void Rotate(const XMVECTOR _rot);
-	void Rotate(float _x, float _y, float _z);
+	~Light() {}; 
 
 	//Getters
-	XMFLOAT3 GetPositionFloat3() const;
-	XMVECTOR GetPositionVector();
-	XMFLOAT3 GetRotationFloat3() const;
-	XMVECTOR GetRotationVector();
 	XMVECTOR GetColour() const;
 
 	//Setters

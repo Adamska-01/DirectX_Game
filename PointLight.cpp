@@ -21,7 +21,7 @@ const XMVECTOR PointLight::GetInversePos(XMMATRIX _world)
 	XMVECTOR determinant;
 	XMMATRIX inverse = XMMatrixInverse(&determinant, _world);
 
-	return XMVector3Transform(XMLoadFloat3(&position), inverse);
+	return XMVector3Transform(XMLoadFloat3(&pos), inverse);
 }
 
 void PointLight::SetRange(float _value)

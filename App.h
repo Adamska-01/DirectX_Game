@@ -8,6 +8,8 @@
 #include "Textures.h"
 #include "Model.h"
 #include "Camera.h"
+#include "Keyboard.h"
+#include "Mouse.h"
 #include <map>
 
 
@@ -29,6 +31,8 @@ private:
 	std::map<Constants::Models, ObjFileModel*> models;
 	Model* crate;
 	Camera* player;
+	Keyboard* keyboard;
+	Mouse* mouse;
 	ID3D11DepthStencilState* pDepthWriteSolid;
 	ID3D11RasterizerState* pRasterSolid;
 

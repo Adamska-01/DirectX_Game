@@ -32,6 +32,8 @@ public:
 	//Getters
 	int GetWidth();
 	int GetHeight();
+	HWND GetHWND();
+	HINSTANCE GetHINST();
 
 public: 
 	Graphics* GetGraphics();

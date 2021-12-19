@@ -7,6 +7,7 @@
 class Graphics
 {
 	friend class Bindable;
+	friend class Window;
 	friend class App;
 public:
 	Graphics(HWND hWnd);

@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
-#include <dxerr.h>
+#include <dxerr.h> 
+#include "Constants.h"	
 #include <DirectXMath.h>
 #define XM_NO_INTRINSICS_   //Use less optimal but more compatible code 
 #define XM_NO_ALLIGNMENT_
@@ -14,7 +15,7 @@ protected:	//Transform data
 	XMVECTOR rotVector;			//16 bytes
 	XMFLOAT3 rot;				//12 bytes 
 	XMFLOAT3 pos;				//12 bytes  
-protected:	//vector constants 
+protected:
 	const XMVECTOR DEFAULT_FORWARD_VECTOR = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	const XMVECTOR DEFAULT_UP_VECTOR = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	const XMVECTOR DEFAULT_BACKWARD_VECTOR = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);

@@ -44,18 +44,21 @@ void GameObject::SetPosition(const XMVECTOR& _pos)
 {
     XMStoreFloat3(&pos, _pos);
     posVector = _pos; 
+    UpdateVectors();
 }
 
 void GameObject::SetPosition(float _x, float _y, float _z)
 {
     pos = XMFLOAT3(_x, _y, _z);
     posVector = XMLoadFloat3(&pos);
+    UpdateVectors();
 }
 
 void GameObject::AdjustPosition(const XMVECTOR& _pos)
 {
     posVector += _pos;
     XMStoreFloat3(&pos, posVector);
+    UpdateVectors();
 }
 
 void GameObject::AdjustPosition(float _x, float _y, float _z)
@@ -64,24 +67,28 @@ void GameObject::AdjustPosition(float _x, float _y, float _z)
     pos.y += _y;
     pos.z += _z;
     posVector = XMLoadFloat3(&pos);
+    UpdateVectors();
 }
 
 void GameObject::SetRotation(const XMVECTOR& _rot)
 {
     rotVector = _rot;
     XMStoreFloat3(&rot, _rot);
+    UpdateVectors();
 }
 
 void GameObject::SetRotation(float _x, float _y, float _z)
 {
     rot = XMFLOAT3(_x, _y, _z);
     rotVector = XMLoadFloat3(&rot);
+    UpdateVectors();
 }
 
 void GameObject::AdjustRotation(const XMVECTOR& _rot)
 {
     rotVector += _rot;
     XMStoreFloat3(&rot, rotVector);
+    UpdateVectors();
 }
 
 void GameObject::AdjustRotation(float _x, float _y, float _z)
@@ -90,6 +97,7 @@ void GameObject::AdjustRotation(float _x, float _y, float _z)
     rot.y += _y;
     rot.z += _z;
     rotVector = XMLoadFloat3(&rot);
+    UpdateVectors();
 }
 
 void GameObject::SetLookAtPos(XMFLOAT3 _lookAtPos)
@@ -117,4 +125,14 @@ void GameObject::SetLookAtPos(XMFLOAT3 _lookAtPos)
         yaw += XM_PI;
 
     SetRotation(pitch, yaw, 0.0f);
+}
+
+void GameObject::UpdateVectors()
+{
+    //Update vectors (pitch 0.0f, no y movement)
+    XMMATRIX vecRotationMatrix = XMMatrixRotationRollPitchYaw(0.0f, rot.y, 0.0f);
+    vec_forward = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
+    vec_backward = XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vecRotationMatrix);
+    vec_left = XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vecRotationMatrix);
+    vec_right = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
 }

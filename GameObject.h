@@ -50,4 +50,7 @@ public:
 	virtual void AdjustRotation(const XMVECTOR& _rot);
 	virtual void AdjustRotation(float _x, float _y, float _z);
 	virtual void SetLookAtPos(XMFLOAT3 _lookAtPos);
+
+private:
+	void UpdateVectors();
 };

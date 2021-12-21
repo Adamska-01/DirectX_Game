@@ -166,6 +166,9 @@
     <ClInclude Include="DirectionalLight.h">
       <Filter>Lights</Filter>
     </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX_Game.rc">

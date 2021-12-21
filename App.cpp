@@ -23,7 +23,7 @@ App::App()
     //Create models 
     crate = new Model(wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     crate->LoadObjModel(models[Constants::Models::CUBE], Constants::modelVS, Constants::modelPS, Constants::crateTX);
-    //crate->Scale(3.0f, 3.0f, 3.0f);
+    crate->SetPosition(0.0f, 0.0f, 8.0f); 
 
     player = new Camera();
     player->SetPosition(0.0f, 0.0f, -2.0f);
@@ -78,19 +78,19 @@ int App::Loop()
             return *ecode;
         } 
 
-        Update(); 
+        UpdateLogic(); 
+        UpdateRender();
     } 
 }
 
-void App::Update()
-{
-    keyboard->ReadInputStates();
-    mouse->ReadInputStates();
 
+void App::UpdateLogic()
+{
     timer.StartClock(); 
-    i += 0.1f;
-    float c = sin(i) / 2 + 0.5f;
-    
+
+    keyboard->ReadInputStates();
+    mouse->ReadInputStates(); 
+    player->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
 
     //Move Camera
     float dt = 1.0f;
@@ -112,40 +112,26 @@ void App::Update()
     {
         XMFLOAT2 movement = mouse->GetMouseMovement();
         player->AdjustRotation(0.01f * movement.x, 0.01f * movement.y, 0.0f);
-    }
-
-    wnd->GetGraphics()->ClearFrame(c, c, 0.0f); 
-    player->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
-
-    crate->SetPosition(0.0f, 0.0f, 8.0f);
+    } 
+     
     crate->Rotate(0.0, 0.1f, 0.0f); 
     crate->UpdateConstantBf(player->GetViewMatrix(), player->GetProjetionMatrix(), nullptr, nullptr, nullptr);
-    if (pDepthWriteSolid == nullptr && pRasterSolid == nullptr)
-    {
-        D3D11_DEPTH_STENCIL_DESC dpthStDesc;
-        ZeroMemory(&dpthStDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-        dpthStDesc.DepthEnable = true;
-        dpthStDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-        dpthStDesc.DepthFunc = D3D11_COMPARISON_LESS;
-        wnd->GetGraphics()->pDevice->CreateDepthStencilState(&dpthStDesc, &pDepthWriteSolid);
-        
-        D3D11_RASTERIZER_DESC rdesc;
-        ZeroMemory(&rdesc, sizeof(D3D11_RASTERIZER_DESC));
-        rdesc.FillMode = D3D11_FILL_SOLID;
-        rdesc.CullMode = D3D11_CULL_BACK;
-        rdesc.FrontCounterClockwise = false;
-        rdesc.DepthBias = false;
-        rdesc.DepthBiasClamp = 0;
-        rdesc.SlopeScaledDepthBias = 0;
-        rdesc.DepthClipEnable = true;
-        rdesc.MultisampleEnable = false;
-        rdesc.AntialiasedLineEnable = false;
-        wnd->GetGraphics()->pDevice->CreateRasterizerState(&rdesc, &pRasterSolid);
-    } 
+     
+    wnd->GetGraphics()->RenderFrame(); 
+}
+
+void App::UpdateRender()
+{
+    i += 0.1f;
+    float c = sin(i) / 2 + 0.5f;
+    wnd->GetGraphics()->ClearFrame(c, c, 0.0f);
+    //-------Draw here-------
 
     wnd->GetGraphics()->pImmediateContext->OMSetDepthStencilState(pDepthWriteSolid, 0);
     wnd->GetGraphics()->pImmediateContext->RSSetState(pRasterSolid);
     crate->Draw();
+
+    //------Finish draw------ 
     wnd->GetGraphics()->RenderFrame();
 
     timer.EndClock();

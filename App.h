@@ -22,7 +22,8 @@ public:
 	//Message loop
 	int Loop();  
 private:
-	void Update();
+	void UpdateLogic();
+	void UpdateRender();
 
 private:
 	Window* wnd; 

@@ -9,19 +9,22 @@ class Graphics
 	friend class Bindable;
 	friend class Window;
 	friend class App;
+
 public:
 	Graphics(HWND hWnd);
 	~Graphics();
 
 	void ClearFrame(float _r, float _g, float _b);
-	void RenderFrame();
-
+	void RenderFrame(); 
 private:
 	HRESULT CreateSwapChain(HWND hWnd);
 	HRESULT CreateBackBuffer();
 	HRESULT CreateZBuffer(HWND hWnd); 
-	HRESULT CreateBlendStates();
 	void CreateViewPort(HWND hWnd);
+private:
+	HRESULT CreateBlendStates();
+	HRESULT CreateDepthStencilStates();
+	HRESULT CreateRasterizerStates();
 
 private: 
 	ID3D11Device* pDevice = nullptr;
@@ -33,7 +36,14 @@ private:
 	//Blend states 
 	ID3D11BlendState* pAlphaBlendEnable;
 	ID3D11BlendState* pAlphaBlendDisable;
-
+	//Depth stencil states 
+	ID3D11DepthStencilState* pDepthWriteSkyBox;
+	ID3D11DepthStencilState* pDepthWriteSolid;
+	//Rasterier states 
+	ID3D11RasterizerState* pRasterSkyBox;
+	ID3D11RasterizerState* pRasterSolid;
+	ID3D11RasterizerState* rastStateCullNone;
+private:
 	D3D_DRIVER_TYPE driverType = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
 };

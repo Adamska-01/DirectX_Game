@@ -197,6 +197,25 @@ HRESULT Graphics::CreateZBuffer(HWND hWnd)
     return hr;
 }
 
+void Graphics::CreateViewPort(HWND hWnd)
+{
+    RECT rc;
+    GetClientRect(hWnd, &rc);
+    UINT width = rc.right - rc.left;
+    UINT height = rc.bottom - rc.top;
+
+    //Set the viewport desc
+    D3D11_VIEWPORT viewport;
+    viewport.TopLeftX = 0;
+    viewport.TopLeftY = 0;
+    viewport.Width = (FLOAT)width;
+    viewport.Height = (FLOAT)height;
+    viewport.MinDepth = .0f;
+    viewport.MaxDepth = 1.0f;
+
+    pImmediateContext->RSSetViewports(1, &viewport);
+}
+
 HRESULT Graphics::CreateBlendStates()
 {
     HRESULT hr = S_OK;
@@ -217,21 +236,51 @@ HRESULT Graphics::CreateBlendStates()
     return hr;
 }
 
-void Graphics::CreateViewPort(HWND hWnd)
+HRESULT Graphics::CreateDepthStencilStates()
 {
-    RECT rc;
-    GetClientRect(hWnd, &rc);
-    UINT width = rc.right - rc.left;
-    UINT height = rc.bottom - rc.top;
+    HRESULT hr = S_OK;
 
-    //Set the viewport desc
-    D3D11_VIEWPORT viewport;
-    viewport.TopLeftX = 0;
-    viewport.TopLeftY = 0;
-    viewport.Width = (FLOAT)width;
-    viewport.Height = (FLOAT)height;
-    viewport.MinDepth = .0f;
-    viewport.MaxDepth = 1.0f;
+    D3D11_DEPTH_STENCIL_DESC dpthStDesc;
+    ZeroMemory(&dpthStDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+    dpthStDesc.DepthEnable = true;
+    dpthStDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    dpthStDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    hr = pDevice->CreateDepthStencilState(&dpthStDesc, &pDepthWriteSolid);
+    if (FAILED(hr)) return hr;
+    dpthStDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    hr = pDevice->CreateDepthStencilState(&dpthStDesc, &pDepthWriteSkyBox);
 
-    pImmediateContext->RSSetViewports(1, &viewport);
+    return hr;
 }
+
+HRESULT Graphics::CreateRasterizerStates()
+{
+    HRESULT hr = S_OK;
+    
+    D3D11_RASTERIZER_DESC rdesc;
+    ZeroMemory(&rdesc, sizeof(D3D11_RASTERIZER_DESC));
+    rdesc.FillMode = D3D11_FILL_SOLID;
+    rdesc.CullMode = D3D11_CULL_NONE;
+    rdesc.FrontCounterClockwise = false;
+    rdesc.DepthBias = false;
+    rdesc.DepthBiasClamp = 0;
+    rdesc.SlopeScaledDepthBias = 0;
+    rdesc.DepthClipEnable = true;
+    rdesc.MultisampleEnable = true;
+    rdesc.AntialiasedLineEnable = true;
+    hr = pDevice->CreateRasterizerState(&rdesc, &rastStateCullNone);
+    if (FAILED(hr)) return hr;
+
+    //Skybox stuff
+    ZeroMemory(&rdesc, sizeof(D3D11_RASTERIZER_DESC));
+    rdesc.FillMode = D3D11_FILL_SOLID;
+    rdesc.CullMode = D3D11_CULL_BACK;
+    hr = pDevice->CreateRasterizerState(&rdesc, &pRasterSolid);
+    if (FAILED(hr)) return hr;
+    rdesc.FillMode = D3D11_FILL_SOLID;
+    rdesc.CullMode = D3D11_CULL_FRONT;
+    hr = pDevice->CreateRasterizerState(&rdesc, &pRasterSkyBox);
+
+    return hr;
+}
+

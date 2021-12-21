@@ -1,5 +1,15 @@
 #include "GameObject.h"
 
+GameObject::GameObject()
+{
+    pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+    posVector = XMLoadFloat3(&pos);
+    rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+    rotVector = XMLoadFloat3(&rot);
+    scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+    scaleVector = XMLoadFloat3(&scale);
+}
+
 const XMVECTOR& GameObject::GetPositionVector() const
 {
     return posVector;
@@ -18,6 +28,16 @@ const XMVECTOR& GameObject::GetRotationVector() const
 const XMFLOAT3& GameObject::GetRotationFloat3() const
 {
     return rot;
+}
+
+const XMVECTOR& GameObject::GetScaleVector() const
+{
+    return scaleVector;
+}
+
+const XMFLOAT3& GameObject::GetScaleFloat3() const
+{
+    return scale;
 }
 
 const XMVECTOR& GameObject::GetForwardVector()
@@ -125,6 +145,18 @@ void GameObject::SetLookAtPos(XMFLOAT3 _lookAtPos)
         yaw += XM_PI;
 
     SetRotation(pitch, yaw, 0.0f);
+}
+
+void GameObject::Scale(const XMVECTOR& _scale)
+{
+    XMStoreFloat3(&scale, _scale);
+    scaleVector = _scale; 
+}
+
+void GameObject::Scale(float _x, float _y, float _z)
+{
+    scale = XMFLOAT3(_x, _y, _z);
+    scaleVector = XMLoadFloat3(&scale); 
 }
 
 void GameObject::UpdateVectors()

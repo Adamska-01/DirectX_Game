@@ -1,12 +1,9 @@
 #include "Camera.h"
 
 Camera::Camera()
+	:
+	GameObject::GameObject()
 {
-	pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	posVector = XMLoadFloat3(&pos);
-	rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	rotVector = XMLoadFloat3(&rot);
-
 	UpdateViewMatrix();
 }
 
@@ -90,7 +87,7 @@ void Camera::UpdateViewMatrix()
 	camTarget += posVector;
 	//Calculate up direction based on current rotation
 	XMVECTOR upDir = XMVector3TransformCoord(DEFAULT_UP_VECTOR, camRotationMatrix);
-	
+	 
 	//Rebuild view matrix
 	viewMatrix = XMMatrixLookAtLH(posVector, camTarget, upDir); 
 }

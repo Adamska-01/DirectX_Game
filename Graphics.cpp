@@ -23,19 +23,42 @@ Graphics::Graphics(HWND hWnd)
         return;
     }
 
+    //Create ViewPort
+    CreateViewPort(hWnd);
+  
     //Create Blend states
     if (FAILED(CreateBlendStates()))
     {
         DXTRACE_MSG("Failed to create Blend states");
         return;
     }
-    
-    //Create ViewPort
-    CreateViewPort(hWnd);
+    //Create depth stencil states
+    if (FAILED(CreateDepthStencilStates()))
+    {
+        DXTRACE_MSG("Failed to create depth stencil states");
+        return;
+    }
+    //Create rasterizer states
+    if (FAILED(CreateRasterizerStates()))
+    {
+        DXTRACE_MSG("Failed to create rasterizer states");
+        return;
+    }
 }
 
 Graphics::~Graphics()
-{
+{     
+    if (pAlphaBlendEnable != nullptr) pAlphaBlendEnable->Release();
+    if (pAlphaBlendDisable != nullptr) pAlphaBlendDisable->Release();
+    if (pDepthWriteSkyBox != nullptr) pDepthWriteSkyBox->Release();
+    if (pDepthWriteSolid != nullptr) pDepthWriteSolid->Release();
+    if (pRasterSkyBox != nullptr) pRasterSkyBox->Release();
+    if (pRasterSolid != nullptr) pRasterSolid->Release();
+    if (rastStateCullNone != nullptr) rastStateCullNone->Release();
+
+    if (pZBuffer != nullptr) pZBuffer->Release();
+
+    //Subsystems cleanup
     if (pImmediateContext != nullptr) pImmediateContext->Release();
     if (pSwapChain != nullptr) pSwapChain->Release();
     if (pBackBufferRTView != nullptr) pBackBufferRTView->Release();

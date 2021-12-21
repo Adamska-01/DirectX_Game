@@ -28,8 +28,8 @@ private:
 	ID3D11Device* pD3DDevice = nullptr;
 	ID3D11DeviceContext* pImmediateContext = nullptr; 
 	ID3D11Buffer* pConstantBuffer = nullptr;
-
 	Graphics* gfx;
+
 	std::string vsShader, psShader, texture;  
 private:
 	ObjFileModel* pObject = nullptr;
@@ -37,10 +37,7 @@ private:
 	XMFLOAT3 position;
 	XMFLOAT3 rotation;
 	XMFLOAT3 scale;
-
-	//Look at
-	float dx, dy, dz;
-
+	  
 private: 
 	XMFLOAT3 colSphereCentre; 
 	float colSphereRadius;
@@ -50,8 +47,7 @@ public:
 	~Model();
 
 	HRESULT LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture);
-	void UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight = nullptr, DirectionalLight* _dirLight = nullptr, PointLight* _pointLight = nullptr);
-	void LookAt_XYZ(float _x, float _y, float _z);
+	void UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos, XMVECTOR _rot, XMVECTOR _scale, AmbientLight* _ambLight = nullptr, DirectionalLight* _dirLight = nullptr, PointLight* _pointLight = nullptr);
 	//Sphere collision
 	void CalculateModelCentrePoint();
 	void CalculateBoundingSphereRadius();
@@ -63,27 +59,6 @@ private:
 	void SetShaders(std::string _vs, std::string _ps);
 public:
 	void Draw();
-
-	//Transformations
-	void MoveForwardY(float _speed);
-	void MoveForwardXY(float _speed);
-	void MoveBackwardsXY(float _speed);
-	void Translate(const XMVECTOR& _pos);
-	void Translate(float _x, float _y, float _z);
-	void Rotate(const XMVECTOR& _rot);
-	void Rotate(float _x, float _y, float _z);
-
-	//Setters
-	void SetPosition(const XMVECTOR& _pos);
-	void SetPosition(float _x, float _y, float _z);
-	void SetRotation(const XMVECTOR& _rot);
-	void SetRotation(float _x, float _y, float _z);
-	void Scale(const XMVECTOR& _scale);
-	void Scale(float _x, float _y, float _z);
-	void SetModel(ObjFileModel* _obj);
-	//Getters
-	const XMFLOAT3& GetPosition();
-	const XMFLOAT3& GetRotation();
-	const XMFLOAT3& GetScale();
+ 
 	ObjFileModel* GetModel();
 };

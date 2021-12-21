@@ -54,12 +54,12 @@ void Model::SetTexture(std::string _texture)
     texture = _texture;
 }
 
-void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _pointLight)
+void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos, XMVECTOR _rot, XMVECTOR _scale, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _pointLight)
 {
     //Set world matrix 
-    XMMATRIX scale = XMMatrixScaling(this->scale.x, this->scale.y, this->scale.z);
-    XMMATRIX rot = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
-    XMMATRIX pos = XMMatrixTranslation(position.x, position.y, position.z);
+    XMMATRIX scale = XMMatrixScalingFromVector(_scale);
+    XMMATRIX rot = XMMatrixRotationRollPitchYawFromVector(_rot);
+    XMMATRIX pos = XMMatrixTranslationFromVector(_pos);
 
     XMMATRIX world = scale * rot * pos;
 
@@ -86,17 +86,7 @@ void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, AmbientLight*
     pImmediateContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
     //upload the new values for the constant buffer 
     pImmediateContext->UpdateSubresource(pConstantBuffer, 0, 0, &cb, 0, 0);
-} 
-
-void Model::LookAt_XYZ(float _x, float _y, float _z)
-{
-    dx = _x - position.x;
-    dy = _y - position.y;
-    dz = _z - position.z;
-
-    rotation.y = atan2(dx, dz);
-    rotation.x = -atan2(dy, sqrt((_x - position.x) * (_x - position.x) + (_z - position.z) * (_z - position.z)));
-}
+}  
 
 void Model::CalculateModelCentrePoint()
 {
@@ -199,130 +189,7 @@ void Model::Draw()
     Textures::GetInstance()->Bind(gfx, texture);  
 
     pObject->Draw();
-}
-
-
-void Model::MoveForwardY(float _speed)
-{
-    XMMATRIX modelRot = XMMatrixRotationRollPitchYaw(0.0f, rotation.y, 0.0f);
-
-    XMVECTOR forwardVec = XMVector3TransformCoord(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), modelRot);
-    forwardVec *= _speed;
-    XMFLOAT3 movement; XMStoreFloat3(&movement, forwardVec);
-
-    position.x += movement.x;
-    position.z += movement.z;
-
-}
-
-void Model::MoveForwardXY(float _speed)
-{
-    XMMATRIX modelRot = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, 0.0f);
-
-    XMVECTOR forwardVec = XMVector3Normalize(XMVector3TransformCoord(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), modelRot));
-    forwardVec *= _speed;
-    XMFLOAT3 movement; XMStoreFloat3(&movement, forwardVec);
-
-    position.x += movement.x;
-    position.y += movement.y;
-    position.z += movement.z;
-}
-
-void Model::MoveBackwardsXY(float _speed)
-{
-    XMMATRIX modelRot = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, 0.0f);
-
-    XMVECTOR forwardVec = XMVector3Normalize(XMVector3TransformCoord(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f), modelRot));
-    forwardVec *= _speed;
-    XMFLOAT3 movement; XMStoreFloat3(&movement, forwardVec);
-
-    position.x += movement.x;
-    position.y += movement.y;
-    position.z += movement.z;
-}
-
-//Transformations
-void Model::Translate(const XMVECTOR& _pos)
-{
-    XMFLOAT3 trans = XMFLOAT3(0.0f, 0.0f, 0.0f);
-    XMStoreFloat3(&trans, _pos);
-    position.x += trans.x;
-    position.y += trans.y;
-    position.z += trans.z;
-}
-
-void Model::Translate(float _x, float _y, float _z)
-{
-    position.x += _x;
-    position.y += _y;
-    position.z += _z;
-}
-
-void Model::Rotate(const XMVECTOR& _rot)
-{
-    XMFLOAT3 rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-    XMStoreFloat3(&rot, _rot);
-    rotation.x += rot.x;
-    rotation.y += rot.y;
-    rotation.z += rot.z;
-}
-
-void Model::Rotate(float _x, float _y, float _z)
-{
-    rotation.x += _x;
-    rotation.y += _y;
-    rotation.z += _z;
-}
-
-void Model::Scale(const XMVECTOR& _scale)
-{
-    XMStoreFloat3(&scale, _scale);
-}
-
-void Model::Scale(float _x, float _y, float _z)
-{
-    scale = XMFLOAT3(_x, _y, _z);
-}
-
-void Model::SetModel(ObjFileModel* _obj)
-{
-    pObject = _obj;
-}
-
-void Model::SetPosition(const XMVECTOR& _pos)
-{
-    XMStoreFloat3(&position, _pos);
-}
-
-void Model::SetPosition(float _x, float _y, float _z)
-{
-    position = XMFLOAT3(_x, _y, _z);
-}
-
-void Model::SetRotation(const XMVECTOR& _rot)
-{
-    XMStoreFloat3(&rotation, _rot);
-}
-
-void Model::SetRotation(float _x, float _y, float _z)
-{
-    rotation = XMFLOAT3(_x, _y, _z);
-}
-
-const XMFLOAT3& Model::GetPosition()
-{
-    return position;
-}
-
-const XMFLOAT3& Model::GetRotation()
-{
-    return rotation;
-}
-
-const XMFLOAT3& Model::GetScale()
-{
-    return scale;
-}
+} 
 
 ObjFileModel* Model::GetModel()
 {

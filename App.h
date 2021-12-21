@@ -6,7 +6,7 @@
 #include "PixelShader.h"
 #include "VertexShader.h"
 #include "Textures.h"
-#include "Model.h"
+#include "Skybox.h"
 #include "Camera.h"
 #include "Keyboard.h"
 #include "Mouse.h"
@@ -30,7 +30,7 @@ private:
 	float i = 0.0f;
 
 	std::map<Constants::Models, ObjFileModel*> models;
-	Model* crate;
+	Skybox* skybox;
 	Camera* player;
 	Keyboard* keyboard;
 	Mouse* mouse;

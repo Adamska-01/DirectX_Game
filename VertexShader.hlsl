@@ -57,7 +57,7 @@ VOut main( float4 position : POSITION, float4 color : COLOR, float2 texcoord : T
  
 VOutTX TextVS(float4 position : POSITION, float2 texcoord : TEXCOORD)
 {
-    VOutTX output;
+    VOutTX output = (VOutTX)0;
 
     output.position = position;
 
@@ -68,7 +68,7 @@ VOutTX TextVS(float4 position : POSITION, float2 texcoord : TEXCOORD)
 
 VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 normal : NORMAL)
 {
-    VOut output;
+    VOut output = (VOut)0;
     
     float4 defaultColour = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -95,14 +95,11 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
     return output;
 }
  
-VOutSky SkyBoxVS(float4 position : POSITION)
+VOutSky SkyBoxVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 normal : NORMAL)
 {
-    VOutSky output;
-    
-    float4 defaultColour = { 1.0f, 1.0f, 1.0f, 1.0f };
+    VOutSky output = (VOutSky)0;
 
-    output.position = mul(worldViewProjection, position); 
-    output.color = defaultColour;
+    output.position = mul(worldViewProjection, position);  
     output.texcoord = position.xyz;
     
     return output;  

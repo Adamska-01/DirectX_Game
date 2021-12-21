@@ -13,8 +13,10 @@ class GameObject
 protected:	//Transform data 
 	XMVECTOR posVector;			//16 bytes
 	XMVECTOR rotVector;			//16 bytes
+	XMVECTOR scaleVector;		//16 bytes
 	XMFLOAT3 rot;				//12 bytes 
 	XMFLOAT3 pos;				//12 bytes  
+	XMFLOAT3 scale;				//12 bytes  
 protected:
 	const XMVECTOR DEFAULT_FORWARD_VECTOR = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	const XMVECTOR DEFAULT_UP_VECTOR = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -28,13 +30,15 @@ protected:
 	XMVECTOR vec_left;
 
 public:
-	GameObject() = default;
+	GameObject();
 	~GameObject() = default;
 
 	const XMVECTOR& GetPositionVector() const;
 	const XMFLOAT3& GetPositionFloat3() const;
 	const XMVECTOR& GetRotationVector() const;
 	const XMFLOAT3& GetRotationFloat3() const;
+	const XMVECTOR& GetScaleVector() const;
+	const XMFLOAT3& GetScaleFloat3() const;
 
 	const XMVECTOR& GetForwardVector();
 	const XMVECTOR& GetBackwardVector();
@@ -51,6 +55,8 @@ public:
 	virtual void AdjustRotation(const XMVECTOR& _rot);
 	virtual void AdjustRotation(float _x, float _y, float _z);
 	virtual void SetLookAtPos(XMFLOAT3 _lookAtPos);
+	void Scale(const XMVECTOR& _scale);
+	void Scale(float _x, float _y, float _z);
 
 private:
 	void UpdateVectors();

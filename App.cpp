@@ -10,7 +10,7 @@ App::App()
     
     //Create shaders
     VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::modelVS, Constants::ilModel, ARRAYSIZE(Constants::ilModel));
-    VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::skyboxVS, Constants::ilSkybox, ARRAYSIZE(Constants::ilSkybox));
+    VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::skyboxVS, Constants::ilModel, ARRAYSIZE(Constants::ilModel));
     VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::reflectVS, Constants::ilReflect, ARRAYSIZE(Constants::ilReflect));
     PixelShader::GetInstance()->SetShader(wnd->GetGraphics(), Constants::modelPS);
     PixelShader::GetInstance()->SetShader(wnd->GetGraphics(), Constants::skyboxPS);
@@ -21,15 +21,13 @@ App::App()
     Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::crateTX);
 
     //Create models 
-    crate = new Model(wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
-    crate->LoadObjModel(models[Constants::Models::CUBE], Constants::modelVS, Constants::modelPS, Constants::crateTX);
-    crate->SetPosition(0.0f, 0.0f, 8.0f); 
+    skybox = new Skybox(wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    skybox->LoadObjModel(models[Constants::Models::CUBE], Constants::skyboxVS, Constants::skyboxPS, Constants::skyboxTX);
+    skybox->Scale(3.0f, 3.0f, 3.0f);
 
     player = new Camera();
     player->SetPosition(0.0f, 0.0f, -2.0f);
-
-    int a = wnd->GetWidth();
-    int b = wnd->GetHeight();
+     
     player->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
 
     //Init input
@@ -39,11 +37,6 @@ App::App()
 
 App::~App()
 {
-    if (wnd != nullptr)
-    {
-        delete wnd;
-        wnd = nullptr;
-    }
     std::map<Constants::Models, ObjFileModel*>::iterator it;
     for (it = models.begin(); it != models.end(); it++)
     { 
@@ -66,6 +59,11 @@ App::~App()
     {
         delete keyboard;
         keyboard = nullptr;
+    }
+    if (wnd != nullptr)
+    {
+        delete wnd;
+        wnd = nullptr;
     }
 }
 
@@ -113,9 +111,9 @@ void App::UpdateLogic()
         XMFLOAT2 movement = mouse->GetMouseMovement();
         player->AdjustRotation(0.01f * movement.x, 0.01f * movement.y, 0.0f);
     } 
-     
-    crate->Rotate(0.0, 0.1f, 0.0f); 
-    crate->UpdateConstantBf(player->GetViewMatrix(), player->GetProjetionMatrix(), nullptr, nullptr, nullptr);
+       
+    skybox->SetPosition(player->GetPositionVector());
+    skybox->UpdateConstantBF(player->GetViewMatrix(), player->GetProjetionMatrix());
      
     wnd->GetGraphics()->RenderFrame(); 
 }
@@ -127,9 +125,12 @@ void App::UpdateRender()
     wnd->GetGraphics()->ClearFrame(c, c, 0.0f);
     //-------Draw here-------
 
-    wnd->GetGraphics()->pImmediateContext->OMSetDepthStencilState(pDepthWriteSolid, 0);
-    wnd->GetGraphics()->pImmediateContext->RSSetState(pRasterSolid);
-    crate->Draw();
+    //Skybox
+    wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSkyBox);
+    wnd->GetGraphics()->pImmediateContext->OMSetDepthStencilState(wnd->GetGraphics()->pDepthWriteSkyBox, 0);
+    skybox->Draw();
+    wnd->GetGraphics()->pImmediateContext->OMSetDepthStencilState(wnd->GetGraphics()->pDepthWriteSolid, 0);
+    wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSolid);
 
     //------Finish draw------ 
     wnd->GetGraphics()->RenderFrame();

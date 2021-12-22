@@ -1,12 +1,12 @@
 #pragma once
 #include "Window.h" 
 #include "FrameTimer.h"
-#include "objfilemodel.h"
-#include "Constants.h"
+#include "objfilemodel.h" 
 #include "PixelShader.h"
 #include "VertexShader.h"
 #include "Textures.h"
 #include "Skybox.h"
+#include "Map.h"
 #include "Camera.h"
 #include "Keyboard.h"
 #include "Mouse.h"
@@ -31,6 +31,7 @@ private:
 
 	std::map<Constants::Models, ObjFileModel*> models;
 	Skybox* skybox;
+	Map* map;
 	Camera* player;
 	Keyboard* keyboard;
 	Mouse* mouse;

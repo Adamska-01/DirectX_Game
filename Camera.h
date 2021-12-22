@@ -1,5 +1,6 @@
 #pragma once 
 #include "GameObject.h"
+#include "BoundingSphere.h"
 #include <math.h>
  
  
@@ -8,6 +9,8 @@ class Camera : public GameObject
 private: 
 	XMMATRIX viewMatrix;		//64 bytes
 	XMMATRIX projectionMatrix;  //64 bytes  
+
+	BoundingSphere sphereCollider;
 
 public:
 	Camera();

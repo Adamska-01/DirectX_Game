@@ -1,4 +1,5 @@
 #include "App.h"
+#include "CollisionHandler.h"
 
 App::App()
 	:
@@ -29,6 +30,10 @@ App::App()
     player->SetPosition(0.0f, 0.0f, -2.0f);
      
     player->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
+
+    //Load map
+    map = new Map("Assets/Map.txt", wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    map->LoadMap(models);
 
     //Init input
     keyboard = new Keyboard(wnd->GetHINST(), wnd->GetHWND());
@@ -93,7 +98,9 @@ void App::UpdateLogic()
     //Move Camera
     float dt = 1.0f;
     if (keyboard->IsKeyPressed(DIK_W))
-        player->AdjustPosition(player->GetForwardVector() * dt);
+    {
+        player->AdjustPosition(player->GetForwardVector() * dt); 
+    }
     if (keyboard->IsKeyPressed(DIK_A))
         player->AdjustPosition(player->GetLeftVector() * dt);
     if (keyboard->IsKeyPressed(DIK_S))
@@ -131,6 +138,7 @@ void App::UpdateRender()
     skybox->Draw();
     wnd->GetGraphics()->pImmediateContext->OMSetDepthStencilState(wnd->GetGraphics()->pDepthWriteSolid, 0);
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSolid);
+    map->Draw(player->GetViewMatrix(), player->GetProjetionMatrix());
 
     //------Finish draw------ 
     wnd->GetGraphics()->RenderFrame();

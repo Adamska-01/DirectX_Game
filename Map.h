@@ -27,4 +27,8 @@ public:
 	void Draw(XMMATRIX _view, XMMATRIX _projection);
 
 	void Clean(); 
+
+public:
+	int GetBrickNumber();
+	std::vector<MapBrick*>& GetBricks();
 };

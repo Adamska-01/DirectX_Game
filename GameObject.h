@@ -5,6 +5,9 @@
 #include <DirectXMath.h>
 #define XM_NO_INTRINSICS_   //Use less optimal but more compatible code 
 #define XM_NO_ALLIGNMENT_
+#include "BoundingBox.h"
+#include "BoundingSphere.h"
+
 
 using namespace DirectX;
 
@@ -28,6 +31,9 @@ protected:
 	XMVECTOR vec_backward;
 	XMVECTOR vec_right;
 	XMVECTOR vec_left;
+public:
+	BoundingBox box;
+	BoundingSphere sphere;
 
 public:
 	GameObject();
@@ -44,6 +50,10 @@ public:
 	const XMVECTOR& GetBackwardVector();
 	const XMVECTOR& GetRightVector();
 	const XMVECTOR& GetLeftVector();
+
+	//Collisions 
+	void CalculateBoundingBoxWorldPos();
+	void CalculateBoundingSphereWorldPos(XMVECTOR newPos);
 
 	//Setters
 	virtual void SetPosition(const XMVECTOR& _pos);

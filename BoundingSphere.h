@@ -5,6 +5,7 @@
 class BoundingSphere
 {
 public: 
+	XMVECTOR colSphereCentreWorldPos;
 	XMFLOAT3 colSphereCentre;
 	float colSphereRadius;
 

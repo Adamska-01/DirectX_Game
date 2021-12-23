@@ -60,6 +60,35 @@ const XMVECTOR& GameObject::GetLeftVector()
     return vec_left;
 }
 
+void GameObject::CalculateBoundingBoxWorldPos()
+{
+    XMMATRIX scale = XMMatrixScaling(this->scale.x, this->scale.y, this->scale.z);
+    XMMATRIX rot = XMMatrixRotationRollPitchYaw(this->rot.x, this->rot.y, this->rot.z);
+    XMMATRIX pos = XMMatrixTranslation(this->pos.x, this->pos.y, this->pos.z);
+
+    XMMATRIX world = scale * rot * pos;
+
+    //min
+    box.minBoundV = XMLoadFloat3(&box.minBound);
+    box.minBoundV = XMVector3Transform(box.minBoundV, world);
+    //max
+    box.maxBoundV = XMLoadFloat3(&box.maxBound);
+    box.maxBoundV = XMVector3Transform(box.maxBoundV, world);
+}
+
+void GameObject::CalculateBoundingSphereWorldPos(XMVECTOR newPos)
+{
+    //Set world matrix 
+    XMMATRIX scale = XMMatrixScaling(this->scale.x, this->scale.y, this->scale.z);
+    XMMATRIX rot = XMMatrixRotationRollPitchYaw(this->rot.x, this->rot.y, this->rot.z);
+    XMMATRIX pos = XMMatrixTranslationFromVector(newPos);
+
+    XMMATRIX world = scale * rot * pos;
+
+    sphere.colSphereCentreWorldPos = XMLoadFloat3(&sphere.colSphereCentre);
+    sphere.colSphereCentreWorldPos = XMVector3Transform(sphere.colSphereCentreWorldPos, world);
+}
+
 void GameObject::SetPosition(const XMVECTOR& _pos)
 {
     XMStoreFloat3(&pos, _pos);

@@ -20,24 +20,24 @@ App::App()
     //Create textures
     Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::skyboxTX);
     Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::crateTX);
+    Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::floorTX);
+    Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::floor2TX);
 
     //Create models 
     skybox = new Skybox(wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     skybox->LoadObjModel(models[Constants::Models::CUBE], Constants::skyboxVS, Constants::skyboxPS, Constants::skyboxTX);
     skybox->Scale(3.0f, 3.0f, 3.0f);
 
-    player = new Camera();
-    player->SetPosition(0.0f, 0.0f, -2.0f);
-     
-    player->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
-
-    //Load map
-    map = new Map("Assets/Map.txt", wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
-    map->LoadMap(models);
-
     //Init input
     keyboard = new Keyboard(wnd->GetHINST(), wnd->GetHWND());
     mouse = new Mouse(wnd->GetHINST(), wnd->GetHWND());
+    
+    //Load map
+    map = new Map("Assets/Map.txt", wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    map->LoadMap(models);
+    
+    player = new Player(map, keyboard, mouse); 
+    player->GetCamera()->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
 }
 
 App::~App()
@@ -93,34 +93,14 @@ void App::UpdateLogic()
 
     keyboard->ReadInputStates();
     mouse->ReadInputStates(); 
-    player->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
+    player->GetCamera()->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
 
     //Move Camera
     float dt = 1.0f;
-    if (keyboard->IsKeyPressed(DIK_W))
-    {
-        player->AdjustPosition(player->GetForwardVector() * dt); 
-    }
-    if (keyboard->IsKeyPressed(DIK_A))
-        player->AdjustPosition(player->GetLeftVector() * dt);
-    if (keyboard->IsKeyPressed(DIK_S))
-        player->AdjustPosition(player->GetBackwardVector() * dt);
-    if (keyboard->IsKeyPressed(DIK_D))
-        player->AdjustPosition(player->GetRightVector() * dt);
-    if (keyboard->IsKeyPressed(DIK_SPACE))
-        player->AdjustPosition(0.0f, dt, 0.0f);
-    if (keyboard->IsKeyPressed(DIK_Z))
-        player->AdjustPosition(0.0f, -dt, 0.0f);
-
-    //Camera rotation
-    if (mouse->IsRightClickPressed())
-    {
-        XMFLOAT2 movement = mouse->GetMouseMovement();
-        player->AdjustRotation(0.01f * movement.x, 0.01f * movement.y, 0.0f);
-    } 
+    player->UpdateLogic();
        
-    skybox->SetPosition(player->GetPositionVector());
-    skybox->UpdateConstantBF(player->GetViewMatrix(), player->GetProjetionMatrix());
+    skybox->SetPosition(player->GetCamera()->GetPositionVector());
+    skybox->UpdateConstantBF(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
      
     wnd->GetGraphics()->RenderFrame(); 
 }
@@ -138,7 +118,7 @@ void App::UpdateRender()
     skybox->Draw();
     wnd->GetGraphics()->pImmediateContext->OMSetDepthStencilState(wnd->GetGraphics()->pDepthWriteSolid, 0);
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSolid);
-    map->Draw(player->GetViewMatrix(), player->GetProjetionMatrix());
+    map->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
 
     //------Finish draw------ 
     wnd->GetGraphics()->RenderFrame();

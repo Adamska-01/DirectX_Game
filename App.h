@@ -7,7 +7,7 @@
 #include "Textures.h"
 #include "Skybox.h"
 #include "Map.h"
-#include "Camera.h"
+#include "Player.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 #include <map>
@@ -32,7 +32,7 @@ private:
 	std::map<Constants::Models, ObjFileModel*> models;
 	Skybox* skybox;
 	Map* map;
-	Camera* player;
+	Player* player;
 	Keyboard* keyboard;
 	Mouse* mouse;
 	ID3D11DepthStencilState* pDepthWriteSolid;

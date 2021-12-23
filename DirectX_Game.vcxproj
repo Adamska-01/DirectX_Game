@@ -178,6 +178,7 @@
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="objfilemodel.cpp" />
     <ClCompile Include="PixelShader.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Text2D.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="objfilemodel.h" />
     <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Skybox.h" />

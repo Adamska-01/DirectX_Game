@@ -22,23 +22,7 @@ MapBrick::~MapBrick()
 void MapBrick::Draw()
 {
 	brick->Draw();
-}
-
-void MapBrick::CalculateBoundingBoxWorldPos()
-{
-	XMMATRIX scale = XMMatrixScaling(this->scale.x, this->scale.y, this->scale.z);
-	XMMATRIX rot = XMMatrixRotationRollPitchYaw(this->rot.x, this->rot.y, this->rot.z);
-	XMMATRIX pos = XMMatrixTranslation(this->pos.x, this->pos.y, this->pos.z);
-
-	XMMATRIX world = scale * rot * pos;
-	
-	//min
-	box.minBoundV = XMLoadFloat3(&box.minBound);
-	box.minBoundV = XMVector3Transform(box.minBoundV, world);
-	//max
-	box.maxBoundV = XMLoadFloat3(&box.maxBound);
-	box.maxBoundV = XMVector3Transform(box.maxBoundV, world);
-}
+} 
 
 Model* MapBrick::GetBrick()
 {

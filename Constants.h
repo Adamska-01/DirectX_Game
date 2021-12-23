@@ -16,6 +16,8 @@ namespace Constants
 	//Textures
 	static std::string skyboxTX = "Assets/Textures/HaloSkyBox.dds";
 	static std::string crateTX = "Assets/Textures/BoxTexture.bmp";
+	static std::string floorTX = "Assets/Textures/Floor.tif";
+	static std::string floor2TX = "Assets/Textures/Floor2.tif";
 
 	//Models 
 	static enum class Models

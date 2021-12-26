@@ -10,20 +10,24 @@ bool CollisionHandler::BoxToBoxCollision(BoundingBox a, BoundingBox b)
 }
 
 bool CollisionHandler::SphereToSphereCollision(BoundingSphere a, BoundingSphere b)
-{
-    return false;
+{ 
+    float distance = sqrt((XMVectorGetX(a.centreWorldPos) - XMVectorGetX(b.centreWorldPos)) * (XMVectorGetX(a.centreWorldPos) - XMVectorGetX(b.centreWorldPos)) +
+        (XMVectorGetY(a.centreWorldPos) - XMVectorGetY(b.centreWorldPos)) * (XMVectorGetY(a.centreWorldPos) - XMVectorGetY(b.centreWorldPos)) +
+        (XMVectorGetZ(a.centreWorldPos) - XMVectorGetZ(b.centreWorldPos)) * (XMVectorGetZ(a.centreWorldPos) - XMVectorGetZ(b.centreWorldPos)));
+    
+    return distance < (a.radius + b.radius);
 }
 
 bool CollisionHandler::SphereToBoxCollision(BoundingSphere a, BoundingBox b)
 {
     // get box closest point to sphere center by clamping
-    float x = std::max(XMVectorGetX(b.minBoundV), std::min(XMVectorGetX(a.colSphereCentreWorldPos), XMVectorGetX(b.maxBoundV)));
-    float y = std::max(XMVectorGetY(b.minBoundV), std::min(XMVectorGetY(a.colSphereCentreWorldPos), XMVectorGetY(b.maxBoundV)));
-    float z = std::max(XMVectorGetZ(b.minBoundV), std::min(XMVectorGetZ(a.colSphereCentreWorldPos), XMVectorGetZ(b.maxBoundV)));
+    float x = std::max(XMVectorGetX(b.minBoundV), std::min(XMVectorGetX(a.centreWorldPos), XMVectorGetX(b.maxBoundV)));
+    float y = std::max(XMVectorGetY(b.minBoundV), std::min(XMVectorGetY(a.centreWorldPos), XMVectorGetY(b.maxBoundV)));
+    float z = std::max(XMVectorGetZ(b.minBoundV), std::min(XMVectorGetZ(a.centreWorldPos), XMVectorGetZ(b.maxBoundV)));
      
-    float distance = sqrt((x - XMVectorGetX(a.colSphereCentreWorldPos)) * (x - XMVectorGetX(a.colSphereCentreWorldPos)) +
-        (y - XMVectorGetY(a.colSphereCentreWorldPos)) * (y - XMVectorGetY(a.colSphereCentreWorldPos)) +
-        (z - XMVectorGetZ(a.colSphereCentreWorldPos)) * (z - XMVectorGetZ(a.colSphereCentreWorldPos)));
+    float distance = sqrt((x - XMVectorGetX(a.centreWorldPos)) * (x - XMVectorGetX(a.centreWorldPos)) +
+        (y - XMVectorGetY(a.centreWorldPos)) * (y - XMVectorGetY(a.centreWorldPos)) +
+        (z - XMVectorGetZ(a.centreWorldPos)) * (z - XMVectorGetZ(a.centreWorldPos)));
 
-    return distance < a.colSphereRadius;
+    return distance < a.radius;
 }

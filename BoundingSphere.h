@@ -5,9 +5,9 @@
 class BoundingSphere
 {
 public: 
-	XMVECTOR colSphereCentreWorldPos;
-	XMFLOAT3 colSphereCentre;
-	float colSphereRadius;
+	XMVECTOR centreWorldPos;
+	XMFLOAT3 centre;
+	float radius;
 
 public:
 	void CalculateModelCentrePoint(ObjFileModel* _pObj);

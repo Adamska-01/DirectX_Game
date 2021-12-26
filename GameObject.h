@@ -53,6 +53,7 @@ public:
 
 	//Collisions 
 	void CalculateBoundingBoxWorldPos();
+	void CalculateBoundingSphereWorldPos();
 	void CalculateBoundingSphereWorldPos(XMVECTOR newPos);
 
 	//Setters

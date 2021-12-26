@@ -8,11 +8,13 @@ Player::Player(Map* _map, Keyboard* kbd, Mouse* ms)
 	keyboard(kbd),
 	mouse(ms)
 { 
-	camera->sphere.colSphereCentre = camera->GetPositionFloat3();
-	camera->sphere.colSphereRadius = 4.0f;
+	camera->sphere.centre = camera->GetPositionFloat3();
+	camera->sphere.radius = 4.0f;
 
 	startPos = map->GetBricks()[10]->GetPositionFloat3();
 	camera->SetPosition(startPos.x, startPos.y + 10.0f, startPos.z);
+
+	health = 100.0f;
 }
 
 Player::~Player()
@@ -182,6 +184,11 @@ void Player::Gravity()
 	{
 		Down();
 	}
+}
+
+bool Player::IsDead()
+{
+	return health <= 0; 
 }
 
 Camera* Player::GetCamera()

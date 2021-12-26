@@ -76,6 +76,19 @@ void GameObject::CalculateBoundingBoxWorldPos()
     box.maxBoundV = XMVector3Transform(box.maxBoundV, world);
 }
 
+void GameObject::CalculateBoundingSphereWorldPos()
+{
+    //Set world matrix 
+    XMMATRIX scale = XMMatrixScaling(this->scale.x, this->scale.y, this->scale.z);
+    XMMATRIX rot = XMMatrixRotationRollPitchYaw(this->rot.x, this->rot.y, this->rot.z);
+    XMMATRIX pos = XMMatrixTranslation(this->pos.x, this->pos.y, this->pos.z);
+
+    XMMATRIX world = scale * rot * pos;
+
+    sphere.centreWorldPos = XMLoadFloat3(&sphere.centre);
+    sphere.centreWorldPos = XMVector3Transform(sphere.centreWorldPos, world);
+}
+
 void GameObject::CalculateBoundingSphereWorldPos(XMVECTOR newPos)
 {
     //Set world matrix 
@@ -85,8 +98,8 @@ void GameObject::CalculateBoundingSphereWorldPos(XMVECTOR newPos)
 
     XMMATRIX world = scale * rot * pos;
 
-    sphere.colSphereCentreWorldPos = XMLoadFloat3(&sphere.colSphereCentre);
-    sphere.colSphereCentreWorldPos = XMVector3Transform(sphere.colSphereCentreWorldPos, world);
+    sphere.centreWorldPos = XMLoadFloat3(&sphere.centre);
+    sphere.centreWorldPos = XMVector3Transform(sphere.centreWorldPos, world);
 }
 
 void GameObject::SetPosition(const XMVECTOR& _pos)

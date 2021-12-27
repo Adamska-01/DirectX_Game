@@ -3,6 +3,8 @@
 #include "MapBrick.h"
 #include "Guard.h"
 
+class Guard;
+class Player;
 
 class Map
 {

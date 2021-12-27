@@ -6,10 +6,10 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
     model(new Model(_gfx, _device, _immContext))
 {
     health = 100.0f;
-    speed = 0.5f;
+    speed = 4.5f;
 
     state = States::PATROLLING;
-    minAlertDistance = 8.5f;
+    minAlertDistance = 12.5f;
 
     currentTimePatrol = 0.0f;
     currentTimeAttack = 0.0f;
@@ -30,12 +30,14 @@ void Guard::UpdateLogic(float dt, Player* p)
 { 
     if (state == States::PATROLLING)
     {
+        XMFLOAT3 dir; XMStoreFloat3(&dir, (GetForwardVector() * speed));
+        SetLookAtPos(dir);
         AdjustPosition(GetForwardVector() * dt * speed);
         currentTimePatrol += dt;
         if (currentTimePatrol >= intervalPatrol)
         {
             speed *= -1;
-            currentTimePatrol = 0;
+            currentTimePatrol = 0.0f;
         }
     }
     else if (state == States::ATTACK)
@@ -50,21 +52,21 @@ void Guard::UpdateLogic(float dt, Player* p)
             {
                 //TODO: attack player
 
-                currentTimeAttack = 0;
+                currentTimeAttack = 0.0f;
             }
         }
         else
         {
             //Follow the player 
             SetLookAtPos(p->GetCamera()->GetPositionFloat3());
-            AdjustPosition(GetForwardVector());
+            AdjustPosition(GetForwardVector() * dt * std::abs(speed));
         }
     }
     else if (state == States::GOTOSTART)
     {
         //Go to start pos 
         SetLookAtPos(startPos);
-        AdjustPosition(GetForwardVector());
+        AdjustPosition(GetForwardVector() * dt * speed);
     }
 
     if (IsDead()) //Respawn
@@ -78,28 +80,30 @@ void Guard::UpdateLogic(float dt, Player* p)
 
 void Guard::AssignState(Player* p)
 {
-    float distance = sqrt(pow((p->GetCamera()->GetPositionFloat3().x - pos.x), 2) + pow((p->GetCamera()->GetPositionFloat3().y - pos.y), 2) + pow((p->GetCamera()->GetPositionFloat3().z - pos.z), 2));
+    float distanceFromPlayer = sqrt(pow((p->GetCamera()->GetPositionFloat3().x - pos.x), 2) + pow((p->GetCamera()->GetPositionFloat3().y - pos.y), 2) + pow((p->GetCamera()->GetPositionFloat3().z - pos.z), 2));
     if (state == States::PATROLLING || state == States::GOTOSTART)
     {
-        if (distance <= minAlertDistance)
+        if (distanceFromPlayer <= minAlertDistance)
         {
             state = States::ATTACK;
+            currentTimeAttack = 0.0f;
         }
     }
-    else if (state == States::ATTACK)
+    if (state == States::ATTACK)
     {
-        if (distance > minAlertDistance)
+        if (distanceFromPlayer > minAlertDistance)
         {
             state = States::GOTOSTART;
         }
     }
-    else if (state == States::GOTOSTART)
+    if (state == States::GOTOSTART && distanceFromPlayer > minAlertDistance)
     {
         float distanceFromStart = sqrt(pow((startPos.x - pos.x), 2) + pow((startPos.y - pos.y), 2) + pow((startPos.z - pos.z), 2));
 
         if (distanceFromStart <= 0.1f)
         {
             state = States::PATROLLING;
+            currentTimePatrol = 0.0f;
         }
     }
 }

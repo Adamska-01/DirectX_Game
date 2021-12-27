@@ -3,6 +3,8 @@
 #include "Model.h"
 #include "Player.h" 
 
+class Player;
+
 class Guard : public GameObject
 {
 private:

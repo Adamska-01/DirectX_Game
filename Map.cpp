@@ -73,7 +73,7 @@ void Map::LoadMap(std::map<Constants::Models, ObjFileModel*>& models)
 				guard->LoadObjModel(models[Constants::Models::SPHERE], Constants::modelVS, Constants::modelPS, Constants::crateTX);
 				guard->sphere.CalculateModelCentrePoint(guard->GetModel()->GetVertexBuffer());
 				guard->sphere.CalculateBoundingSphereRadius(guard->GetModel()->GetVertexBuffer());
-				guard->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), 2 * bricks.back()->GetScaleFloat3().y * guard->sphere.radius, column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
+				guard->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), bricks.back()->GetScaleFloat3().y * guard->sphere.radius, column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
 				guard->SetStartPos(guard->GetPositionFloat3().x, guard->GetPositionFloat3().y, guard->GetPositionFloat3().z);
 				break;
 			default:

@@ -33,10 +33,9 @@ private:
 	Skybox* skybox;
 	Map* map;
 	Player* player;
+
 	Keyboard* keyboard;
 	Mouse* mouse;
-	ID3D11DepthStencilState* pDepthWriteSolid;
-	ID3D11RasterizerState* pRasterSolid;
 
 	FrameTimer timer;
 };

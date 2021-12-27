@@ -55,9 +55,7 @@ App::~App()
     }
     VertexShader::GetInstance()->Clean();
     PixelShader::GetInstance()->Clean();
-    Textures::GetInstance()->Clean();
-    if (pDepthWriteSolid != nullptr) pDepthWriteSolid->Release();
-    if (pRasterSolid != nullptr) pRasterSolid->Release();
+    Textures::GetInstance()->Clean(); 
 
     //Release Mouse before Keyboard (keybord releases IDirectInput8*)
     if (mouse != nullptr)

@@ -20,6 +20,9 @@ namespace Constants
 	static std::string floor2TX = "Assets/Textures/Floor2.tif";
 	static std::string enemyTX = "Assets/Textures/enemy.png";
 
+	//Fonts
+	static std::string font1 = "Assets/Textures/font1.png";
+
 	//Models 
 	static enum class Models
 	{

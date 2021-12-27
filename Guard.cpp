@@ -30,14 +30,15 @@ void Guard::UpdateLogic(float dt, Player* p)
 { 
     if (state == States::PATROLLING)
     {
-        XMFLOAT3 dir; XMStoreFloat3(&dir, (GetForwardVector() * speed));
-        SetLookAtPos(dir);
-        AdjustPosition(GetForwardVector() * dt * speed);
+        AdjustPosition(GetForwardVector() * dt * std::abs(speed));
+       
         currentTimePatrol += dt;
         if (currentTimePatrol >= intervalPatrol)
         {
             speed *= -1;
             currentTimePatrol = 0.0f;
+            XMFLOAT3 lookat; XMStoreFloat3(&lookat, (GetPositionVector() + (GetForwardVector() * speed)));
+            SetLookAtPos(lookat);
         }
     }
     else if (state == States::ATTACK)
@@ -66,7 +67,7 @@ void Guard::UpdateLogic(float dt, Player* p)
     {
         //Go to start pos 
         SetLookAtPos(startPos);
-        AdjustPosition(GetForwardVector() * dt * speed);
+        AdjustPosition(GetForwardVector() * dt * std::abs(speed));
     }
 
     if (IsDead()) //Respawn
@@ -100,7 +101,7 @@ void Guard::AssignState(Player* p)
     {
         float distanceFromStart = sqrt(pow((startPos.x - pos.x), 2) + pow((startPos.y - pos.y), 2) + pow((startPos.z - pos.z), 2));
 
-        if (distanceFromStart <= 0.1f)
+        if (distanceFromStart <= 0.05f)
         {
             state = States::PATROLLING;
             currentTimePatrol = 0.0f;

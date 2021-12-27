@@ -43,4 +43,5 @@ public:
 
 public:
 	Camera* GetCamera();
+	int GetHealth();
 };

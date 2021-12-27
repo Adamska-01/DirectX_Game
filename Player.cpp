@@ -195,3 +195,8 @@ Camera* Player::GetCamera()
 {
 	return camera;
 }
+
+int Player::GetHealth()
+{
+	return health;
+}

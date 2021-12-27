@@ -39,6 +39,11 @@ App::App()
     
     player = new Player(map, keyboard, mouse); 
     player->GetCamera()->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
+
+    framerateText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    crosshair = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    health = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    cameraDestroyed = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
 }
 
 App::~App()
@@ -123,7 +128,26 @@ void App::UpdateRender()
     skybox->Draw();
     wnd->GetGraphics()->pImmediateContext->OMSetDepthStencilState(wnd->GetGraphics()->pDepthWriteSolid, 0);
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSolid);
+    
+    //Render map and all objects inside 
     map->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
+    
+    //Render Text  
+    wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->rastStateCullNone);
+    wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendEnable, 0, 0xffffffff);
+    framerateText->AddText("FPS " + std::to_string(FrameTimer::Frames()), -1.0f, 1.0f, 0.05f);
+    framerateText->RenderText();                    
+
+    crosshair->AddText(" ", 0.0f, 0.0f, 0.08f);
+    crosshair->RenderText();        
+
+    health->AddText("Health " + std::to_string(player->GetHealth()), -1.0f, -0.8f, 0.09f);
+    health->RenderText();
+
+    cameraDestroyed->AddText("Cameras to destroy " + std::to_string(player->GetHealth()), -0.3f, 1.0f, 0.06f);
+    cameraDestroyed->RenderText();                    
+    wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendDisable, 0, 0xffffffff);
+
 
     //------Finish draw------ 
     wnd->GetGraphics()->RenderFrame();

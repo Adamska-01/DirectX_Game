@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "Text2D.h"
 #include <map>
 
 
@@ -33,6 +34,10 @@ private:
 	Skybox* skybox;
 	Map* map;
 	Player* player;
+	Text2D* framerateText;
+	Text2D* crosshair;
+	Text2D* health;
+	Text2D* cameraDestroyed;
 
 	Keyboard* keyboard;
 	Mouse* mouse;

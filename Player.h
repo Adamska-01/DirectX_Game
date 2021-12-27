@@ -3,8 +3,7 @@
 #include "Map.h"
 #include "Keyboard.h"
 #include "Mouse.h"
-
-
+ 
 class Player
 {
 private:

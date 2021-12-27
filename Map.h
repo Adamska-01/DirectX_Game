@@ -1,6 +1,7 @@
 #pragma once
 #include "IOFunctions.h"
 #include "MapBrick.h"
+#include "Guard.h"
 
 
 class Map
@@ -9,6 +10,7 @@ private:
 	//Grids
 	std::vector<std::string> gridMap; 
 	std::vector<MapBrick*> bricks; 
+	Guard* guard = nullptr;
 
 	int offset{ 0 };  
 	int width{ 0 }, height{ 0 }, bricksNumber{ 0 };
@@ -23,7 +25,7 @@ public:
 	  
 	void LoadMap(std::map<Constants::Models, ObjFileModel*>& models);
 
-	//void Update(float dt);
+	void UpdateLogic(float dt, Player* p);
 	void Draw(XMMATRIX _view, XMMATRIX _projection);
 
 	void Clean(); 
@@ -32,3 +34,5 @@ public:
 	int GetBrickNumber();
 	std::vector<MapBrick*>& GetBricks();
 };
+
+

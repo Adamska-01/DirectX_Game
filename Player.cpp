@@ -12,7 +12,7 @@ Player::Player(Map* _map, Keyboard* kbd, Mouse* ms)
 	camera->sphere.radius = 4.0f;
 
 	startPos = map->GetBricks()[10]->GetPositionFloat3();
-	camera->SetPosition(startPos.x, startPos.y + 10.0f, startPos.z);
+	camera->SetPosition(startPos.x, startPos.y + 40.0f, startPos.z);
 
 	health = 100.0f;
 }

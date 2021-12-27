@@ -61,5 +61,5 @@ private:
 public:
 	void Draw();
  
-	ObjFileModel* GetModel();
+	ObjFileModel* GetVertexBuffer();
 };

@@ -118,3 +118,15 @@ bool Guard::IsDead()
 {
     return health <= 0;
 }
+
+Model* Guard::GetModel()
+{
+    return model;
+}
+
+void Guard::SetStartPos(float _x, float _y, float _z)
+{
+    startPos.x = _x;
+    startPos.y = _y;
+    startPos.z = _z;
+}

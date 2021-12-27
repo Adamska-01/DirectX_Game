@@ -191,7 +191,7 @@ void Model::Draw()
     pObject->Draw();
 } 
 
-ObjFileModel* Model::GetModel()
+ObjFileModel* Model::GetVertexBuffer()
 {
     return pObject;
 }

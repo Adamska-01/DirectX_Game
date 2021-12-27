@@ -1,8 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Model.h"
-#include "Player.h"
-
+#include "Player.h" 
 
 class Guard : public GameObject
 {
@@ -40,4 +39,10 @@ public:
 	void Draw();
 
 	bool IsDead();
+
+	//Getters
+	Model* GetModel();
+
+	//Setters
+	void SetStartPos(float _x, float _y, float _z);
 };

@@ -42,6 +42,11 @@ App::App()
 
 App::~App()
 {
+    if (map != nullptr)
+    {
+        delete map;
+        map = nullptr;
+    }
     std::map<Constants::Models, ObjFileModel*>::iterator it;
     for (it = models.begin(); it != models.end(); it++)
     { 
@@ -98,6 +103,7 @@ void App::UpdateLogic()
     //Move Camera
     float dt = 1.0f;
     player->UpdateLogic();
+    map->UpdateLogic(FrameTimer::DeltaTime(), player);
        
     skybox->SetPosition(player->GetCamera()->GetPositionVector());
     skybox->UpdateConstantBF(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());

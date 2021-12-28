@@ -34,6 +34,7 @@ private:
 	Skybox* skybox;
 	Map* map;
 	Player* player;
+
 	Text2D* framerateText;
 	Text2D* crosshair;
 	Text2D* health;

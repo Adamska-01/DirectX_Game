@@ -53,6 +53,26 @@ App::~App()
         delete map;
         map = nullptr;
     }
+    if (framerateText != nullptr)
+    {
+        delete framerateText;
+        framerateText = nullptr;
+    }
+    if (crosshair != nullptr)
+    {
+        delete crosshair;
+        crosshair = nullptr;
+    }
+    if (health != nullptr)
+    {
+        delete health;
+        health = nullptr;
+    }
+    if (cameraDestroyed != nullptr)
+    {
+        delete cameraDestroyed;
+        cameraDestroyed = nullptr;
+    }
     std::map<Constants::Models, ObjFileModel*>::iterator it;
     for (it = models.begin(); it != models.end(); it++)
     { 

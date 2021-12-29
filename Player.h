@@ -55,4 +55,5 @@ public:
 public:
 	Camera* GetCamera();
 	int GetHealth();
+	std::vector<Projectile*> GetProjectiles();
 };

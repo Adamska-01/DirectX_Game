@@ -16,6 +16,7 @@ private:
 	{
 		XMMATRIX worldViewProjection;	 //64 bytes
 		XMMATRIX worldView;				 //64 bytes
+		XMVECTOR colourModifier;		 //16 bytes
 		XMVECTOR directionalLightVector; //16 bytes
 		XMVECTOR directionalLightColour; //16 bytes
 		XMVECTOR ambientLightColour;     //16 bytes
@@ -24,7 +25,7 @@ private:
 
 		XMFLOAT3 pointLightAttenuation;  //12 bytes
 		float range;                     //4 bytes
-	}; //Total size = 224 bytes  
+	}; //Total size = 2 bytes  
 private:
 	ID3D11Device* pD3DDevice = nullptr;
 	ID3D11DeviceContext* pImmediateContext = nullptr; 
@@ -48,7 +49,7 @@ public:
 	~Model();
 
 	HRESULT LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture);
-	void UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos, XMVECTOR _rot, XMVECTOR _scale, AmbientLight* _ambLight = nullptr, DirectionalLight* _dirLight = nullptr, PointLight* _pointLight = nullptr);
+	void UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos, XMVECTOR _rot, XMVECTOR _scale, XMVECTOR _clMod, AmbientLight* _ambLight = nullptr, DirectionalLight* _dirLight = nullptr, PointLight* _pointLight = nullptr);
 	//Sphere collision
 	void CalculateModelCentrePoint();
 	void CalculateBoundingSphereRadius();

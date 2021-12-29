@@ -5,6 +5,7 @@ Projectile::Projectile(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContex
 	model(new Model(_gfx, _device, _immContext))
 { 
 	speed = 85.0f;
+	damage = 10.0f;
 }
 
 void Projectile::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture)
@@ -26,7 +27,8 @@ void Projectile::UpdateLogic(float dt)
 
 void Projectile::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
 {
-	model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector);
+	XMVECTOR colourMod = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
 }
 
 void Projectile::Draw()
@@ -37,4 +39,14 @@ void Projectile::Draw()
 bool Projectile::CanDestroy()
 {
 	return canDestroy;
+}
+
+float Projectile::GetDamage()
+{
+	return damage;
+}
+
+void Projectile::SetDestruction(bool _value)
+{
+	canDestroy = _value;
 }

@@ -32,7 +32,7 @@ void BoundingSphere::CalculateModelCentrePoint(ObjFileModel* _pObj)
     centre = minPlusMaxMinusMin;
 }
 
-void BoundingSphere::CalculateBoundingSphereRadius(ObjFileModel* _pObj)
+void BoundingSphere::CalculateBoundingSphereRadius(ObjFileModel* _pObj, float _scale)
 {
     for (int i = 0; i < _pObj->numverts; i++)
     {
@@ -41,4 +41,6 @@ void BoundingSphere::CalculateBoundingSphereRadius(ObjFileModel* _pObj)
         if (radius < rad)
             radius = rad;
     }
+
+    radius *= _scale;
 }

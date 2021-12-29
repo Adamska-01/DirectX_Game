@@ -21,7 +21,8 @@ Skybox::~Skybox()
 
 void Skybox::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
 {
-	cube->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector);
+	XMVECTOR a = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	cube->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, a);
 }
 
 void Skybox::Draw()

@@ -8,6 +8,7 @@ class Projectile : public GameObject
 private:
 	Model* model;
 	float speed;
+	float damage;
 	bool canDestroy = false;
 
 	float currentTime = 0.0f;
@@ -21,6 +22,10 @@ public:
 	void UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection);
 	void Draw();
 
-	//Getter 
+	//Getters 
 	bool CanDestroy();
+	float GetDamage();
+
+	//Setters
+	void SetDestruction(bool _value);
 };

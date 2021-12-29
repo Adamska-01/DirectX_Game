@@ -36,8 +36,8 @@ HRESULT Model::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::stri
     //Set up and create constant buffer
     D3D11_BUFFER_DESC cBufDesc;
     ZeroMemory(&cBufDesc, sizeof(cBufDesc));
-    cBufDesc.Usage = D3D11_USAGE_DEFAULT;   //can use UpdateSubresource() to update
-    cBufDesc.ByteWidth = 224;    //MUST be a multiple of 16, calculate from CB struct
+    cBufDesc.Usage = D3D11_USAGE_DEFAULT;   //can use UpdateSubresource() to update 
+    cBufDesc.ByteWidth = 240;    //MUST be a multiple of 16, calculate from CB struct
     cBufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;    //Use as a constant buffer
     hr = pD3DDevice->CreateBuffer(&cBufDesc, NULL, &pConstantBuffer);
     if (FAILED(hr)) return hr;
@@ -54,7 +54,7 @@ void Model::SetTexture(std::string _texture)
     texture = _texture;
 }
 
-void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos, XMVECTOR _rot, XMVECTOR _scale, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _pointLight)
+void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos, XMVECTOR _rot, XMVECTOR _scale, XMVECTOR _clMod, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _pointLight)
 {
     //Set world matrix 
     XMMATRIX scale = XMMatrixScalingFromVector(_scale);
@@ -87,6 +87,7 @@ void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos
     else
         cb.pointLightColour = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
+    cb.colourModifier = _clMod;
     cb.worldView = world * _view;
     cb.worldViewProjection = world * _view * _projection;
     //Set constant buffer to activa state

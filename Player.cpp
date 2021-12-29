@@ -68,9 +68,11 @@ void Player::UpdateLogic(float dt)
 	{
 		projectiles.push_back(new Projectile(gfx, pDevice, pImmContext));
 		projectiles.back()->LoadObjModel(projectileModel, Constants::modelVS, Constants::modelPS, Constants::goldTX);
+		projectiles.back()->Scale(0.1f, 0.1f, 0.1f);
+		projectiles.back()->sphere.CalculateModelCentrePoint(projectileModel);
+		projectiles.back()->sphere.CalculateBoundingSphereRadius(projectileModel, projectiles.back()->GetScaleFloat3().x);
 		projectiles.back()->SetPosition(camera->GetPositionVector());
 		projectiles.back()->SetRotation(camera->GetRotationVector());
-		projectiles.back()->Scale(0.1f, 0.1f, 0.1f);
 
 		currentTime = 0.0f;
 	}
@@ -246,4 +248,9 @@ Camera* Player::GetCamera()
 int Player::GetHealth()
 {
 	return health;
+}
+
+std::vector<Projectile*> Player::GetProjectiles()
+{
+	return projectiles;
 }

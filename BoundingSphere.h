@@ -11,5 +11,5 @@ public:
 
 public:
 	void CalculateModelCentrePoint(ObjFileModel* _pObj);
-	void CalculateBoundingSphereRadius(ObjFileModel* _pObj);
+	void CalculateBoundingSphereRadius(ObjFileModel* _pObj, float _scale);
 };

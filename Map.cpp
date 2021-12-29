@@ -72,7 +72,7 @@ void Map::LoadMap(std::map<Constants::Models, ObjFileModel*>& models)
 				guard = new Guard(gfx, pDevice, pImmContext);
 				guard->LoadObjModel(models[Constants::Models::SPHERE], Constants::modelVS, Constants::modelPS, Constants::enemyTX);
 				guard->sphere.CalculateModelCentrePoint(guard->GetModel()->GetVertexBuffer());
-				guard->sphere.CalculateBoundingSphereRadius(guard->GetModel()->GetVertexBuffer());
+				guard->sphere.CalculateBoundingSphereRadius(guard->GetModel()->GetVertexBuffer(), guard->GetScaleFloat3().x);
 				guard->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), bricks.back()->GetScaleFloat3().y * guard->sphere.radius, column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
 				guard->SetStartPos(guard->GetPositionFloat3().x, guard->GetPositionFloat3().y, guard->GetPositionFloat3().z);
 				break;
@@ -84,14 +84,15 @@ void Map::LoadMap(std::map<Constants::Models, ObjFileModel*>& models)
  
 void Map::UpdateLogic(float dt, Player* p)
 {
-	guard->UpdateLogic(dt, p);
+	guard->UpdateLogic(dt, p, this);
 }
 
 void Map::Draw(XMMATRIX _view, XMMATRIX _projection)
 {   
 	for (int i = 0; i < bricksNumber; i++)
 	{
-		bricks[i]->GetBrick()->UpdateConstantBf(_view, _projection, bricks[i]->GetPositionVector(), bricks[i]->GetRotationVector(), bricks[i]->GetScaleVector());
+		XMVECTOR a = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		bricks[i]->GetBrick()->UpdateConstantBf(_view, _projection, bricks[i]->GetPositionVector(), bricks[i]->GetRotationVector(), bricks[i]->GetScaleVector(), a);
 		bricks[i]->Draw();
 	}
 

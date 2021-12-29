@@ -1,5 +1,6 @@
 #include "Guard.h"
 #include "CollisionHandler.h"
+#include <algorithm>
 
 Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext)
     :
@@ -13,8 +14,12 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
 
     currentTimePatrol = 0.0f;
     currentTimeAttack = 0.0f;
+    currentTimeColourMod = 0.0f;
+    currentTimeRespawn = 0.0f;
     intervalPatrol = 4.0f;
     intervalAttack = 2.0f;
+    intervalToRespawn = 2.0f;
+    intervalColourMod = 0.1f;
 }
 
 Guard::~Guard()
@@ -26,7 +31,7 @@ void Guard::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string 
     model->LoadObjModel(_obj, _VSshader, _PSshader, _texture);
 }
 
-void Guard::UpdateLogic(float dt, Player* p)
+void Guard::UpdateLogic(float dt, Player* p, Map* _map)
 { 
     if (state == States::PATROLLING)
     {
@@ -70,13 +75,52 @@ void Guard::UpdateLogic(float dt, Player* p)
         AdjustPosition(GetForwardVector() * dt * std::abs(speed));
     }
 
+    //check collisions
+    CalculateBoundingSphereWorldPos();
+    int length = _map->GetBrickNumber();
+    for (int i = 0; i < length; i++)
+    {
+        if (CollisionHandler::SphereToBoxCollision(sphere, _map->GetBricks()[i]->box))
+        {
+            speed *= -1; 
+            XMFLOAT3 lookat; XMStoreFloat3(&lookat, (GetPositionVector() + (GetForwardVector() * speed)));
+            SetLookAtPos(lookat);
+            currentTimePatrol = 0.0f;
+            break;
+        }
+    }
+
+    CheckCollisionAndDamage(p->GetProjectiles());
+
     if (IsDead()) //Respawn
     {
-        SetPosition(startPos.x, startPos.y, startPos.z);
-        state = States::PATROLLING;
+        SetPosition(startPos.x, -100.0f, startPos.z);
+        currentTimeRespawn += dt;
+        if (currentTimeRespawn >= intervalToRespawn)
+        {
+            SetPosition(startPos.x, startPos.y, startPos.z);
+            XMFLOAT3 lookat; XMStoreFloat3(&lookat, (GetPositionVector() + (GetForwardVector() * speed)));
+            SetLookAtPos(lookat);
+            state = States::PATROLLING;
+            health = 100.0f; 
+            currentTimePatrol = 0.0f;
+            currentTimeAttack = 0.0f;
+            currentTimeColourMod = 0.0f;
+            currentTimeRespawn = 0.0f; 
+        }
     }
 
     AssignState(p);
+
+    if (modColour)
+    {
+        currentTimeColourMod += dt;
+        if (currentTimeColourMod >= intervalColourMod)
+        {
+            modColour = false;
+            currentTimeColourMod = 0.0f;
+        }
+    }
 }
 
 void Guard::AssignState(Player* p)
@@ -109,9 +153,40 @@ void Guard::AssignState(Player* p)
     }
 }
 
+void Guard::DealDamage(float _dmg)
+{
+    health -= _dmg;
+    std::clamp(health, 0.0f, 100.0f);
+}
+
+void Guard::CheckCollisionAndDamage(std::vector<Projectile*>const & _projectiles)
+{
+    CalculateBoundingSphereWorldPos();
+    int length = _projectiles.size();
+    for (int i = 0; i < length; i++)
+    {
+        _projectiles[i]->CalculateBoundingSphereWorldPos();
+        if(CollisionHandler::SphereToSphereCollision(sphere, _projectiles[i]->sphere))
+        {
+            DealDamage(_projectiles[i]->GetDamage());
+            _projectiles[i]->SetDestruction(true);
+            modColour = true;
+        }
+    }
+}
+
 void Guard::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
 {
-    model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector);
+    if (modColour)
+    {
+        XMVECTOR colourMod = XMVectorSet(15.0f, 0.0f, 0.0f, 0.0f);
+        model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
+    }
+    else
+    {
+        XMVECTOR colourMod = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+        model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
+    }
 }
 
 void Guard::Draw()

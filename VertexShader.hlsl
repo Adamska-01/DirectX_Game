@@ -20,6 +20,7 @@ cbuffer CBuffer0
 {
     matrix worldViewProjection; //64 bytes
     matrix worldView; //64 bytes
+    float4 colourModifier; //16 bytes
     float4 directionalLightVector; //16 bytes
     float4 directionalLightColour; //16 bytes
     float4 ambientLightColour; //16 bytes
@@ -49,7 +50,7 @@ VOut main( float4 position : POSITION, float4 color : COLOR, float2 texcoord : T
     float diffuseAmount = dot(directionalLightVector, normal);
     diffuseAmount = saturate(diffuseAmount); //clamp
     
-    output.color = ambientLightColour + (directionalLightColour * diffuseAmount) + pointLightAtt;
+    output.color = ambientLightColour + colourModifier + (directionalLightColour * diffuseAmount) + pointLightAtt;
     output.texcoord = texcoord.xy;
 	
     return output;
@@ -87,8 +88,8 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
     //Directional light
     float diffuseAmount = dot(directionalLightVector, normal);
     diffuseAmount = saturate(diffuseAmount); //clamp
-    
-    output.color = defaultColour + ambientLightColour + (directionalLightColour * diffuseAmount) + pointLightAtt;
+      
+    output.color = defaultColour + colourModifier + ambientLightColour + (directionalLightColour * diffuseAmount) + pointLightAtt;
   
     output.texcoord = texcoord;
     return output;

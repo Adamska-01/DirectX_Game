@@ -5,7 +5,7 @@ Projectile::Projectile(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContex
 	model(new Model(_gfx, _device, _immContext))
 { 
 	speed = 85.0f;
-	damage = 10.0f;
+	damage = 20.0f;
 }
 
 void Projectile::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture)

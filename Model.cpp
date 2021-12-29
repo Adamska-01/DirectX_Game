@@ -66,12 +66,16 @@ void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos
     //Update constant buffer
     MODEL_CONSTANT_BUFFER cb;
     if (_ambLight != nullptr)
-        cb.ambientLightColour = _ambLight->GetColour(); 
+        cb.ambientLightColour = _ambLight->GetColour();
+    else
+        cb.ambientLightColour = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
     if (_dirLight != nullptr)
     {
         cb.directionalLightColour = _dirLight->GetColour();
         cb.directionalLightVector = _dirLight->GetDirection(world);
-    }     
+    }    
+    else
+        cb.directionalLightColour = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
     //point light and Attenuation
     if (_pointLight != nullptr)
     {
@@ -80,6 +84,9 @@ void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos
         cb.pointLightAttenuation = _pointLight->GetAttenuation(); //constant falloff factor
         cb.range = _pointLight->GetRange();
     } 
+    else
+        cb.pointLightColour = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
     cb.worldView = world * _view;
     cb.worldViewProjection = world * _view * _projection;
     //Set constant buffer to activa state

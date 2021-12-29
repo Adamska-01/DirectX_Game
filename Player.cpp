@@ -33,7 +33,7 @@ Player::~Player()
 void Player::UpdateLogic(float dt)
 { 
 	//Fire rate
-	fireRate += dt;
+	currentTime += dt;
 
 	//Movement
 	if (keyboard->IsKeyPressed(DIK_W))
@@ -70,6 +70,7 @@ void Player::UpdateLogic(float dt)
 		projectiles.back()->LoadObjModel(projectileModel, Constants::modelVS, Constants::modelPS, Constants::goldTX);
 		projectiles.back()->SetPosition(camera->GetPositionVector());
 		projectiles.back()->SetRotation(camera->GetRotationVector());
+		projectiles.back()->Scale(0.1f, 0.1f, 0.1f);
 
 		currentTime = 0.0f;
 	}
@@ -77,37 +78,30 @@ void Player::UpdateLogic(float dt)
 	//projectiles update 
 	int length = projectiles.size();
 	for (int i = 0; i < length; i++)
+	{ 
+		projectiles[i]->UpdateLogic(dt); 
+	} 
+	for (int i = 0; i < length; i++) //Destroy projectiles
 	{
 		if (projectiles[i]->CanDestroy())
 		{
 			delete projectiles[i];
 			projectiles[i] = nullptr;
 			projectiles.erase(projectiles.begin() + i);
-		}
-		else //update
-		{
-			projectiles[i]->UpdateLogic(dt);
+			--length;
 		}
 	}
 
 
 	Gravity(); 
 }
-
-void Player::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
+ 
+void Player::Draw(XMMATRIX _view, XMMATRIX _projection)
 {
 	int length = projectiles.size();
 	for (int i = 0; i < length; i++)
 	{
 		projectiles[i]->UpdateConstantBF(_view, _projection);
-	}
-}
-
-void Player::Draw()
-{
-	int length = projectiles.size();
-	for (int i = 0; i < length; i++)
-	{
 		projectiles[i]->Draw();
 	}
 }

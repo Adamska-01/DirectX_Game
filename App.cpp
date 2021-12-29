@@ -38,7 +38,7 @@ App::App()
     map = new Map("Assets/Map.txt", wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     map->LoadMap(models);
     
-    player = new Player(map, keyboard, mouse); 
+    player = new Player(map, keyboard, mouse, wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext, models[Constants::Models::SPHERE]);
     player->GetCamera()->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
 
     framerateText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
@@ -127,12 +127,11 @@ void App::UpdateLogic()
 
     //Move Camera
     float dt = 1.0f;
-    player->UpdateLogic();
+    player->UpdateLogic(FrameTimer::DeltaTime());
     map->UpdateLogic(FrameTimer::DeltaTime(), player);
        
     skybox->SetPosition(player->GetCamera()->GetPositionVector());
-    skybox->UpdateConstantBF(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
-     
+
     wnd->GetGraphics()->RenderFrame(); 
 }
 
@@ -146,20 +145,22 @@ void App::UpdateRender()
     //Skybox
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSkyBox);
     wnd->GetGraphics()->pImmediateContext->OMSetDepthStencilState(wnd->GetGraphics()->pDepthWriteSkyBox, 0);
+    skybox->UpdateConstantBF(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
     skybox->Draw();
     wnd->GetGraphics()->pImmediateContext->OMSetDepthStencilState(wnd->GetGraphics()->pDepthWriteSolid, 0);
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSolid);
     
     //Render map and all objects inside 
-    map->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
-    
+    map->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix()); 
+    player->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
+
     //Render Text  
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->rastStateCullNone);
     wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendEnable, 0, 0xffffffff);
     framerateText->AddText("FPS " + std::to_string(FrameTimer::Frames()), -1.0f, 1.0f, 0.05f);
     framerateText->RenderText();                    
 
-    crosshair->AddText(" ", 0.0f, 0.0f, 0.08f);
+    crosshair->AddText(" ", -0.04f, 0.04f, 0.08f);
     crosshair->RenderText();        
 
     health->AddText("Health " + std::to_string(player->GetHealth()), -1.0f, -0.8f, 0.09f);

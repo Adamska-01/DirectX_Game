@@ -37,9 +37,8 @@ public:
 	Player(Map* _map, Keyboard* kbd, Mouse* ms, Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext, ObjFileModel* prjModel);
 	~Player();
 
-	void UpdateLogic(float dt);
-	void UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection);
-	void Draw();
+	void UpdateLogic(float dt); 
+	void Draw(XMMATRIX _view, XMMATRIX _projection);
 
 	void Forward();
 	void BackWards();

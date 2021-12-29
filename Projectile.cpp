@@ -4,7 +4,7 @@ Projectile::Projectile(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContex
 	:
 	model(new Model(_gfx, _device, _immContext))
 { 
-	speed = 20.0f;
+	speed = 85.0f;
 }
 
 void Projectile::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture)
@@ -14,6 +14,14 @@ void Projectile::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::st
 
 void Projectile::UpdateLogic(float dt)
 {
+	XMMATRIX vecRotationMatrix = XMMatrixRotationRollPitchYaw(rot.x, rot.y, 0.0f);
+	vec_forward = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
+	AdjustPosition(GetForwardVector() * dt * speed);
+	currentTime += dt;
+	if (currentTime >= timeToDestroy)
+	{
+		canDestroy = true;
+	}
 }
 
 void Projectile::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)

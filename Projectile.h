@@ -10,6 +10,8 @@ private:
 	float speed;
 	bool canDestroy = false;
 
+	float currentTime = 0.0f;
+	float timeToDestroy = 5.0f;
 
 public:
 	Projectile(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext);

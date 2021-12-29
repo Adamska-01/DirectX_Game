@@ -23,6 +23,7 @@ App::App()
     Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::floorTX);
     Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::floor2TX);
     Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::enemyTX);
+    Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::goldTX);
 
     //Create models 
     skybox = new Skybox(wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);

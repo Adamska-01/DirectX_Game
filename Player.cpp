@@ -1,12 +1,16 @@
 #include "Player.h"
 #include "CollisionHandler.h"
 
-Player::Player(Map* _map, Keyboard* kbd, Mouse* ms)
+Player::Player(Map* _map, Keyboard* kbd, Mouse* ms, Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext, ObjFileModel* prjModel)
 	:
 	camera(new Camera()),
 	map(_map),
 	keyboard(kbd),
-	mouse(ms)
+	mouse(ms),
+	gfx(_gfx),
+	pDevice(_device),
+	pImmContext(_immContext),
+	projectileModel(prjModel)
 { 
 	camera->sphere.centre = camera->GetPositionFloat3();
 	camera->sphere.radius = 4.0f;
@@ -26,9 +30,12 @@ Player::~Player()
 	}
 }
 
-void Player::UpdateLogic()
+void Player::UpdateLogic(float dt)
 { 
-	//input check
+	//Fire rate
+	fireRate += dt;
+
+	//Movement
 	if (keyboard->IsKeyPressed(DIK_W))
 	{
 		Forward();
@@ -45,18 +52,64 @@ void Player::UpdateLogic()
 	{
 		Right();
 	}
+	//Jump
 	if (keyboard->IsKeyPressed(DIK_SPACE) && velocity.y == 0.0f)
 	{
 		Jump(jumpForce);
 	}
-
+	//Camera rotation
 	if (mouse->IsRightClickPressed())
 	{
 		XMFLOAT2 movement = mouse->GetMouseMovement();
 		camera->AdjustRotation(0.01f * movement.x, 0.01f * movement.y, 0.0f);
 	}
+	//Shoot
+	if (mouse->IsLeftClickDown() && currentTime >= fireRate)
+	{
+		projectiles.push_back(new Projectile(gfx, pDevice, pImmContext));
+		projectiles.back()->LoadObjModel(projectileModel, Constants::modelVS, Constants::modelPS, Constants::goldTX);
+		projectiles.back()->SetPosition(camera->GetPositionVector());
+		projectiles.back()->SetRotation(camera->GetRotationVector());
+
+		currentTime = 0.0f;
+	}
+
+	//projectiles update 
+	int length = projectiles.size();
+	for (int i = 0; i < length; i++)
+	{
+		if (projectiles[i]->CanDestroy())
+		{
+			delete projectiles[i];
+			projectiles[i] = nullptr;
+			projectiles.erase(projectiles.begin() + i);
+		}
+		else //update
+		{
+			projectiles[i]->UpdateLogic(dt);
+		}
+	}
+
 
 	Gravity(); 
+}
+
+void Player::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
+{
+	int length = projectiles.size();
+	for (int i = 0; i < length; i++)
+	{
+		projectiles[i]->UpdateConstantBF(_view, _projection);
+	}
+}
+
+void Player::Draw()
+{
+	int length = projectiles.size();
+	for (int i = 0; i < length; i++)
+	{
+		projectiles[i]->Draw();
+	}
 }
 
 void Player::Forward()

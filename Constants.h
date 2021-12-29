@@ -19,6 +19,7 @@ namespace Constants
 	static std::string floorTX = "Assets/Textures/Floor.tif";
 	static std::string floor2TX = "Assets/Textures/Floor2.tif";
 	static std::string enemyTX = "Assets/Textures/enemy.png";
+	static std::string goldTX = "Assets/Textures/Gold.tif";
 
 	//Fonts
 	static std::string font1 = "Assets/Textures/font1.png";

@@ -9,6 +9,7 @@ private:
 	static constexpr float FRAMETIME = (double)1000 / FPS; //millisecond
 	static int currentFPS;
 	static float deltaTime;
+	static float time;
 
 	std::chrono::system_clock::time_point start;
 	std::chrono::system_clock::time_point end;
@@ -31,4 +32,5 @@ public:
 	//dt
 	static float DeltaTime() { return deltaTime; }
 	static int Frames() { return currentFPS; } 
+	static float Time() { return time; }
 };

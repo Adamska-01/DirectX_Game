@@ -50,11 +50,19 @@ App::App()
     health = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     cameraDestroyed = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
 
+    //Lights
     ambientLight = new AmbientLight();
     ambientLight->SetColour(0.3f, 0.3f, 0.3f, 1.0f); //Grey;
     directionalLight = new DirectionalLight();
-    directionalLight->SetColour(0.25f, 0.29f, 0.30f, 0.0f); //Sun colour
+    directionalLight->SetColour(0.98f, 0.84f, 0.11f, 0.0f); //Sun colour
     directionalLight->SetDirection(0.5f, 0.5f, -1.0f);
+    pointLight = new PointLight();
+    pointLight->SetColour(0.0f, 15.0f, 0.0f, 1.0f);
+    pointLight->SetAttenuation(XMFLOAT3(0.0f, 1.0f, 0.0f));
+    pointLight->SetRange(5.0f);
+    pointLight->SetPosition(player->GetCamera()->GetPositionFloat3().x, player->GetCamera()->GetPositionFloat3().y, player->GetCamera()->GetPositionFloat3().z + 40.0f);
+    pointLightStartPos = pointLight->GetPositionFloat3();
+    defaultValue = 50.0f;
 }
 
 App::~App()
@@ -151,6 +159,12 @@ void App::UpdateRender()
     if (i > 360.0f)
         i = 0.0f;
     directionalLight->SetRotation(i, 0.0f, 0.0f);
+
+
+    XMFLOAT3 newPos = pointLightStartPos;
+    newPos.x = sin(FrameTimer::Time() / 1000.0f);
+    pointLight->SetPosition(newPos.x *defaultValue + pointLightStartPos.x, newPos.y, newPos.z);
+
     wnd->GetGraphics()->ClearFrame(0.0f, 0.0f, 0.0f);
     //-------Draw here-------
 
@@ -163,7 +177,7 @@ void App::UpdateRender()
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSolid);
     
     //Render map and all objects inside 
-    map->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix(), ambientLight, directionalLight); 
+    map->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix(), ambientLight, directionalLight, pointLight); 
     player->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
 
     //Render Text  
@@ -178,7 +192,7 @@ void App::UpdateRender()
     health->AddText("Health " + std::to_string(player->GetHealth()), -1.0f, -0.8f, 0.09f);
     health->RenderText();
 
-    cameraDestroyed->AddText("Cameras to destroy " + std::to_string(player->GetHealth()), -0.3f, 1.0f, 0.06f);
+    cameraDestroyed->AddText("Cameras to destroy " + std::to_string(map->GetCameras().size()), -0.3f, 1.0f, 0.06f);
     cameraDestroyed->RenderText();                    
     wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendDisable, 0, 0xffffffff);
 

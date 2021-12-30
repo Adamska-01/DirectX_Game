@@ -3,7 +3,8 @@
 
 using namespace std::chrono;
 
-float FrameTimer::deltaTime = 0;
+float FrameTimer::deltaTime = 0.0f;
+float FrameTimer::time = 0.0f;
 int FrameTimer::currentFPS = 0;
 
 FrameTimer::FrameTimer()
@@ -40,7 +41,8 @@ void FrameTimer::EndClock()
 
 void FrameTimer::DelayByFrameTime()
 {
-	workTime = end - start;;
+	workTime = end - start;
+	time += workTime.count();
 	CalculateFPS();
 
 	if (workTime.count() < FRAMETIME)

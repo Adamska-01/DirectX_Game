@@ -47,7 +47,7 @@ private:
 	void DealDamageToSelf(float _dmg);
 public:
 	void CheckCollisionAndDamage(std::vector<Projectile*>const & _projectiles);
-	void UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection);
+	void UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _pointLight);
 	void Draw();
 
 	bool IsDead();

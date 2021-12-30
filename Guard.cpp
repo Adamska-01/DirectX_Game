@@ -180,17 +180,17 @@ void Guard::CheckCollisionAndDamage(std::vector<Projectile*>const & _projectiles
     }
 }
 
-void Guard::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
+void Guard::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _pointLight)
 {
     if (modColour)
     {
-        XMVECTOR colourMod = XMVectorSet(15.0f, 0.0f, 0.0f, 0.0f);
-        model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
+        XMVECTOR colourMod = XMVectorSet(0.0f, 15.0f, 0.0f, 0.0f);
+        model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod, _ambLight, _dirLight, _pointLight);
     }
     else
     {
         XMVECTOR colourMod = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-        model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
+        model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod, _ambLight, _dirLight, _pointLight);
     }
 }
 

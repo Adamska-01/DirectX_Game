@@ -10,9 +10,7 @@ Map::Map(std::string filePath, Graphics* _gfx, ID3D11Device* _device, ID3D11Devi
 
 	gfx = _gfx;
 	pDevice = _device;
-	pImmContext = _context;
-
-	
+	pImmContext = _context; 
 }
 
 Map::~Map()
@@ -126,12 +124,12 @@ void Map::UpdateLogic(float dt, Player* p)
 	}
 }
 
-void Map::Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight)
+void Map::Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _ptLight)
 {   
 	for (int i = 0; i < bricksNumber; i++)
 	{
 		XMVECTOR a = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		bricks[i]->GetBrick()->UpdateConstantBf(_view, _projection, bricks[i]->GetPositionVector(), bricks[i]->GetRotationVector(), bricks[i]->GetScaleVector(), a, _ambLight, _dirLight);
+		bricks[i]->GetBrick()->UpdateConstantBf(_view, _projection, bricks[i]->GetPositionVector(), bricks[i]->GetRotationVector(), bricks[i]->GetScaleVector(), a, _ambLight, _dirLight, _ptLight);
 		bricks[i]->Draw();
 	}
 
@@ -139,7 +137,7 @@ void Map::Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, Di
 	int lengthGuards = guards.size();
 	for (int i = 0; i < lengthGuards; i++)
 	{
-		guards[i]->UpdateConstantBF(_view, _projection);
+		guards[i]->UpdateConstantBF(_view, _projection, _ambLight, _dirLight, _ptLight);
 		guards[i]->Draw();
 	}
 
@@ -189,5 +187,10 @@ int Map::GetBrickNumber()
 std::vector<MapBrick*>& Map::GetBricks()
 {
 	return bricks;
+}
+
+std::vector<SecurityCamera*>& Map::GetCameras()
+{
+	return secCamera;
 }
  

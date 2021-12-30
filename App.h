@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "AmbientLight.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Text2D.h"
@@ -45,6 +46,9 @@ private:
 	//Lights
 	AmbientLight* ambientLight;
 	DirectionalLight* directionalLight;
+	PointLight* pointLight;
+	XMFLOAT3 pointLightStartPos;
+	float defaultValue;
 
 	Keyboard* keyboard;
 	Mouse* mouse;

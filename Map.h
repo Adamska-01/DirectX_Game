@@ -31,7 +31,7 @@ public:
 	void LoadMap(std::map<Constants::Models, ObjFileModel*>& models, Player* p);
 
 	void UpdateLogic(float dt, Player* p);
-	void Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight);
+	void Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _ptLight);
 
 private:
 	void Clean(); 
@@ -39,6 +39,7 @@ private:
 public:
 	int GetBrickNumber();
 	std::vector<MapBrick*>& GetBricks();
+	std::vector<SecurityCamera*>& GetCameras();
 };
 
 

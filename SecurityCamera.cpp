@@ -1,5 +1,6 @@
 #include "SecurityCamera.h"
 #include "CollisionHandler.h"
+#include "FrameTimer.h"
 #include <algorithm>
 
 SecurityCamera::SecurityCamera(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext)
@@ -8,6 +9,7 @@ SecurityCamera::SecurityCamera(Graphics* _gfx, ID3D11Device* _device, ID3D11Devi
 {
 	health = 100.0f;
 	rangeToDamage = 15.0f;
+	rotRange = .7f;
 }
 
 SecurityCamera::~SecurityCamera()
@@ -26,6 +28,10 @@ void SecurityCamera::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std
 
 void SecurityCamera::UpdateLogic(float dt, Player* p)
 {
+	//Rotation 
+	float vl = sin(FrameTimer::Time() / 1000.0f);
+	SetRotation(startRot.x, startRot.y + rotRange * vl, startRot.z);
+
 	float distanceFromPlayer = sqrt(pow((p->GetCamera()->GetPositionFloat3().x - pos.x), 2) + pow((p->GetCamera()->GetPositionFloat3().y - pos.y), 2) + pow((p->GetCamera()->GetPositionFloat3().z - pos.z), 2));
 	if (distanceFromPlayer <= rangeToDamage)
 	{
@@ -86,9 +92,9 @@ bool SecurityCamera::IsDead()
 	return false;
 }
 
-void SecurityCamera::SetStartPos(float _x, float _y, float _z)
+void SecurityCamera::SetStartRot(float _x, float _y, float _z)
 {
-	startPos.x = _x;
-	startPos.y = _y;
-	startPos.z = _z;
+	startRot.x = _x;
+	startRot.y = _y;
+	startRot.z = _z;
 }

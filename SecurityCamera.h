@@ -12,8 +12,10 @@ private:
 	Model* model;
 	float health;
 	float rangeToDamage;
-	XMFLOAT3 startPos;
+	XMFLOAT3 startRot;
 	bool modColour;
+	float rotRange;
+
 
 public:
 	SecurityCamera(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext);
@@ -33,5 +35,5 @@ public:
 	bool IsDead();
 
 	//Setters
-	void SetStartPos(float _x, float _y, float _z);
+	void SetStartRot(float _x, float _y, float _z);
 };

@@ -66,8 +66,8 @@ void Map::LoadMap(std::map<Constants::Models, ObjFileModel*>& models, Player* p)
 				secCamera.back()->sphere.CalculateModelCentrePoint(secCamera.back()->GetModel()->GetVertexBuffer());
 				secCamera.back()->sphere.CalculateBoundingSphereRadius(secCamera.back()->GetModel()->GetVertexBuffer(), secCamera.back()->GetScaleFloat3().x);
 				secCamera.back()->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), bricks.back()->GetScaleFloat3().y * secCamera.back()->sphere.radius, column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
-				secCamera.back()->SetStartPos(secCamera.back()->GetPositionFloat3().x, secCamera.back()->GetPositionFloat3().y, secCamera.back()->GetPositionFloat3().z);
 				secCamera.back()->SetRotation(-30.0f, -45.0f, 0.0f);
+				secCamera.back()->SetStartRot(secCamera.back()->GetRotationFloat3().x, secCamera.back()->GetRotationFloat3().y, secCamera.back()->GetRotationFloat3().z);
 				break;
 			case 'B':
 				//Place ground floor
@@ -79,8 +79,8 @@ void Map::LoadMap(std::map<Constants::Models, ObjFileModel*>& models, Player* p)
 				secCamera.back()->sphere.CalculateModelCentrePoint(secCamera.back()->GetModel()->GetVertexBuffer());
 				secCamera.back()->sphere.CalculateBoundingSphereRadius(secCamera.back()->GetModel()->GetVertexBuffer(), secCamera.back()->GetScaleFloat3().x);
 				secCamera.back()->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), bricks.back()->GetScaleFloat3().y * secCamera.back()->sphere.radius, column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
-				secCamera.back()->SetStartPos(secCamera.back()->GetPositionFloat3().x, secCamera.back()->GetPositionFloat3().y, secCamera.back()->GetPositionFloat3().z);
 				secCamera.back()->SetRotation(-30.0f, 0.0f, 0.0f);
+				secCamera.back()->SetStartRot(secCamera.back()->GetRotationFloat3().x, secCamera.back()->GetRotationFloat3().y, secCamera.back()->GetRotationFloat3().z);
 				break;
 			case 'C':
 				//Place ground floor
@@ -92,8 +92,8 @@ void Map::LoadMap(std::map<Constants::Models, ObjFileModel*>& models, Player* p)
 				secCamera.back()->sphere.CalculateModelCentrePoint(secCamera.back()->GetModel()->GetVertexBuffer());
 				secCamera.back()->sphere.CalculateBoundingSphereRadius(secCamera.back()->GetModel()->GetVertexBuffer(), secCamera.back()->GetScaleFloat3().x);
 				secCamera.back()->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), bricks.back()->GetScaleFloat3().y * secCamera.back()->sphere.radius, column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
-				secCamera.back()->SetStartPos(secCamera.back()->GetPositionFloat3().x, secCamera.back()->GetPositionFloat3().y, secCamera.back()->GetPositionFloat3().z);
 				secCamera.back()->SetRotation(-30.0f, 45.0f, 0.0f);
+				secCamera.back()->SetStartRot(secCamera.back()->GetRotationFloat3().x, secCamera.back()->GetRotationFloat3().y, secCamera.back()->GetRotationFloat3().z);
 				break;
 			case 'P':
 				//Place ground floor

@@ -13,10 +13,7 @@ Player::Player(Map* _map, Keyboard* kbd, Mouse* ms, Graphics* _gfx, ID3D11Device
 	projectileModel(prjModel)
 { 
 	camera->sphere.centre = camera->GetPositionFloat3();
-	camera->sphere.radius = 4.0f;
-
-	startPos = map->GetBricks()[10]->GetPositionFloat3();
-	camera->SetPosition(startPos.x, startPos.y + 40.0f, startPos.z);
+	camera->sphere.radius = 4.0f; 
 
 	health = 100.0f;
 }
@@ -238,6 +235,13 @@ void Player::Gravity()
 bool Player::IsDead()
 {
 	return health <= 0; 
+}
+
+void Player::SetStartPos(float _x, float _y, float _z)
+{
+	startPos.x = _x;
+	startPos.y = _y;
+	startPos.z = _z;
 }
 
 Camera* Player::GetCamera()

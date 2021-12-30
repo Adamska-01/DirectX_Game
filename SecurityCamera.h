@@ -4,6 +4,7 @@
 #include "Player.h" 
 
 class Player;
+class Projectile;
 
 class SecurityCamera : public GameObject
 {
@@ -22,15 +23,13 @@ public:
 	void UpdateLogic(float dt, Player* p);
 	void CheckCollisionAndDamage(std::vector<Projectile*>const& _projectiles);
 	void UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection);
-	void Draw();
-public: 
-	
-
+	void Draw(); 
 private:
 	void DealDamageToSelf(float _dmg);
 
 public:
 	//Getters
+	Model* GetModel();
 	bool IsDead();
 
 	//Setters

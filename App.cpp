@@ -13,7 +13,7 @@ App::App()
     //Create shaders
     VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::modelVS, Constants::ilModel, ARRAYSIZE(Constants::ilModel));
     VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::skyboxVS, Constants::ilModel, ARRAYSIZE(Constants::ilModel));
-    VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::reflectVS, Constants::ilReflect, ARRAYSIZE(Constants::ilReflect));
+    VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::reflectVS, Constants::ilModel, ARRAYSIZE(Constants::ilModel));
     PixelShader::GetInstance()->SetShader(wnd->GetGraphics(), Constants::modelPS);
     PixelShader::GetInstance()->SetShader(wnd->GetGraphics(), Constants::skyboxPS);
     PixelShader::GetInstance()->SetShader(wnd->GetGraphics(), Constants::reflectPS);
@@ -36,12 +36,14 @@ App::App()
     keyboard = new Keyboard(wnd->GetHINST(), wnd->GetHWND());
     mouse = new Mouse(wnd->GetHINST(), wnd->GetHWND());
     
+    
     //Load map
     map = new Map("Assets/Map.txt", wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
-    map->LoadMap(models);
-    
+
     player = new Player(map, keyboard, mouse, wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext, models[Constants::Models::SPHERE]);
     player->GetCamera()->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
+    
+    map->LoadMap(models, player);
 
     framerateText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     crosshair = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
@@ -51,7 +53,7 @@ App::App()
     ambientLight = new AmbientLight();
     ambientLight->SetColour(0.3f, 0.3f, 0.3f, 1.0f); //Grey;
     directionalLight = new DirectionalLight();
-    directionalLight->SetColour(0.98f, 0.84f, 0.11f, 0.0f); //Sun colour
+    directionalLight->SetColour(0.25f, 0.29f, 0.30f, 0.0f); //Sun colour
     directionalLight->SetDirection(0.5f, 0.5f, -1.0f);
 }
 
@@ -145,7 +147,7 @@ void App::UpdateLogic()
 
 void App::UpdateRender()
 {
-    i += 0.05f;
+    i += 10.0f * FrameTimer::DeltaTime();
     if (i > 360.0f)
         i = 0.0f;
     directionalLight->SetRotation(i, 0.0f, 0.0f);

@@ -105,30 +105,14 @@ VOutSky SkyBoxVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 
     return output;  
 }
 
-VOutSky ReflectVS(float4 position : POSITION, float3 normal : NORMAL)
+VOutSky ReflectVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 normal : NORMAL)
 {
     VOutSky output;
 
     output.position = mul(worldViewProjection, position);
     
     //Position relative to the camera
-    float3 wvpos = mul(worldView, position);
-    
-    //Point light
-    float4 lightVector = pointLightPos - position;
-    float pointAmount = dot(normalize(lightVector), normal);
-    pointAmount = saturate(pointAmount); //clamp
-    //Attenuation
-    float dist = distance(position, pointLightPos);
-    float4 pointLightAtt = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    if (dist < range)
-        pointLightAtt = (pointLightColour * pointAmount) / (pointLightAttenuation[0] + (pointLightAttenuation[1] * dist) + (pointLightAttenuation[2] * dist * dist));
-
-    //Directional light
-    float diffuseAmount = dot(directionalLightVector, normal);
-    diffuseAmount = saturate(diffuseAmount); //clamp
-    
-    output.color = ambientLightColour + (directionalLightColour * diffuseAmount) + pointLightAtt;
+    float3 wvpos = mul(worldView, position); 
     
     //surface normla relative to the camera 
     float3 wvNormal = mul(worldView, normal);

@@ -1,5 +1,6 @@
 #include "SecurityCamera.h"
 #include "CollisionHandler.h"
+#include <algorithm>
 
 SecurityCamera::SecurityCamera(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext)
 	:
@@ -52,14 +53,32 @@ void SecurityCamera::CheckCollisionAndDamage(std::vector<Projectile*> const& _pr
 
 void SecurityCamera::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
 {
+	if (modColour)
+	{
+		XMVECTOR colourMod = XMVectorSet(15.0f, 0.0f, 0.0f, 0.0f);
+		model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
+	}
+	else
+	{
+		XMVECTOR colourMod = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
+	}
 }
 
 void SecurityCamera::Draw()
 {
+	model->Draw();
 }
 
 void SecurityCamera::DealDamageToSelf(float _dmg)
 {
+	health -= _dmg;
+	std::clamp(health, 0.0f, 100.0f);
+}
+
+Model* SecurityCamera::GetModel()
+{
+	return model;
 }
 
 bool SecurityCamera::IsDead()

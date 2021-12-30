@@ -17,7 +17,7 @@ namespace Constants
 	static std::string reflectPS = "ReflectPS";
 
 	//Textures
-	static std::string skyboxTX = "Assets/Textures/HaloSkyBox.dds";
+	static std::string skyboxTX = "Assets/Textures/City.dds";
 	static std::string crateTX = "Assets/Textures/BoxTexture.bmp";
 	static std::string floorTX = "Assets/Textures/Floor.tif";
 	static std::string floor2TX = "Assets/Textures/Floor2.tif";
@@ -40,11 +40,6 @@ namespace Constants
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	}; 
-	static D3D11_INPUT_ELEMENT_DESC ilReflect[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	}; 
+	};  
 } 
  

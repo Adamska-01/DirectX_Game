@@ -24,5 +24,5 @@ float4 SkyBoxPS(float4 position : SV_POSITION, float4 color : COLOR, float3 texc
 
 float4 ReflectPS(float4 position : SV_POSITION, float4 color : COLOR, float3 texcoord : TEXCOORD) : SV_TARGET
 {
-    return color * cube0.Sample(sampler0, texcoord);
+    return cube0.Sample(sampler0, texcoord);
 }

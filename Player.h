@@ -24,7 +24,7 @@ private:
 	XMFLOAT3 startPos;
 	XMFLOAT3 velocity;
 
-	float jumpForce = 28;
+	float jumpForce = 28.0f;
 	float gravity = 1.5f;
 
 	float fireRate = 0.2f;
@@ -51,6 +51,8 @@ public:
 	void Gravity();
 
 	bool IsDead();
+
+	void SetStartPos(float _x, float _y, float _z);
 
 public:
 	Camera* GetCamera();

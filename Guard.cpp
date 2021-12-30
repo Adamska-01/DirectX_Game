@@ -19,7 +19,7 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
     intervalPatrol = 4.0f;
     intervalAttack = 2.0f;
     intervalToRespawn = 2.0f;
-    intervalColourMod = 0.1f;
+    intervalColourMod = 0.3f;
 }
 
 Guard::~Guard()

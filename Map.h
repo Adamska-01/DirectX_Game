@@ -28,7 +28,7 @@ public:
 	void LoadMap(std::map<Constants::Models, ObjFileModel*>& models);
 
 	void UpdateLogic(float dt, Player* p);
-	void Draw(XMMATRIX _view, XMMATRIX _projection);
+	void Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight);
 
 	void Clean(); 
 

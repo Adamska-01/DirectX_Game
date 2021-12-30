@@ -50,7 +50,7 @@ void Map::LoadMap(std::map<Constants::Models, ObjFileModel*>& models)
 				for (int i = 1; i <= 3; i++)
 				{
 					bricks.push_back(new MapBrick(gfx, pDevice, pImmContext));
-					bricks.back()->LoadObjModel(models[Constants::Models::CUBE], Constants::modelVS, Constants::modelPS, Constants::floorTX);
+					bricks.back()->LoadObjModel(models[Constants::Models::CUBE], Constants::modelVS, Constants::modelPS, Constants::wallTX);
 					bricks.back()->box.CalculateMinAndMax(bricks.back()->GetBrick()->GetVertexBuffer());
 					bricks.back()->Scale(3.0f, 3.0f, 3.0f);
 					bricks.back()->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), i * bricks.back()->GetScaleFloat3().y * (bricks.back()->box.maxBound.y - bricks.back()->box.minBound.y), column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
@@ -87,12 +87,12 @@ void Map::UpdateLogic(float dt, Player* p)
 	guard->UpdateLogic(dt, p, this);
 }
 
-void Map::Draw(XMMATRIX _view, XMMATRIX _projection)
+void Map::Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight)
 {   
 	for (int i = 0; i < bricksNumber; i++)
 	{
 		XMVECTOR a = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		bricks[i]->GetBrick()->UpdateConstantBf(_view, _projection, bricks[i]->GetPositionVector(), bricks[i]->GetRotationVector(), bricks[i]->GetScaleVector(), a);
+		bricks[i]->GetBrick()->UpdateConstantBf(_view, _projection, bricks[i]->GetPositionVector(), bricks[i]->GetRotationVector(), bricks[i]->GetScaleVector(), a, _ambLight, _dirLight);
 		bricks[i]->Draw();
 	}
 

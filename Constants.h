@@ -23,6 +23,7 @@ namespace Constants
 	static std::string floor2TX = "Assets/Textures/Floor2.tif";
 	static std::string enemyTX = "Assets/Textures/enemy.png";
 	static std::string goldTX = "Assets/Textures/Gold.tif";
+	static std::string wallTX = "Assets/Textures/wall.tif";
 
 	//Fonts
 	static std::string font1 = "Assets/Textures/font1.png";
@@ -30,7 +31,7 @@ namespace Constants
 	//Models 
 	static enum class Models
 	{
-		CUBE, SPHERE
+		CUBE, SPHERE, CAMERA
 	};
 	
 	//Input Layouts

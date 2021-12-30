@@ -8,6 +8,7 @@ App::App()
     //Create models
     models[Constants::Models::CUBE] = new ObjFileModel("Assets/Models/cube.obj", wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     models[Constants::Models::SPHERE] = new ObjFileModel("Assets/Models/Sphere.obj", wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    models[Constants::Models::CAMERA] = new ObjFileModel("Assets/Models/camera.obj", wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     
     //Create shaders
     VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::modelVS, Constants::ilModel, ARRAYSIZE(Constants::ilModel));
@@ -24,6 +25,7 @@ App::App()
     Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::floor2TX);
     Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::enemyTX);
     Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::goldTX);
+    Textures::GetInstance()->SetTexture(wnd->GetGraphics(), Constants::wallTX);
 
     //Create models 
     skybox = new Skybox(wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
@@ -45,6 +47,12 @@ App::App()
     crosshair = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     health = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     cameraDestroyed = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+
+    ambientLight = new AmbientLight();
+    ambientLight->SetColour(0.3f, 0.3f, 0.3f, 1.0f); //Grey;
+    directionalLight = new DirectionalLight();
+    directionalLight->SetColour(0.98f, 0.84f, 0.11f, 0.0f); //Sun colour
+    directionalLight->SetDirection(0.5f, 0.5f, -1.0f);
 }
 
 App::~App()
@@ -137,9 +145,11 @@ void App::UpdateLogic()
 
 void App::UpdateRender()
 {
-    i += 0.1f;
-    float c = sin(i) / 2 + 0.5f;
-    wnd->GetGraphics()->ClearFrame(c, c, 0.0f);
+    i += 0.05f;
+    if (i > 360.0f)
+        i = 0.0f;
+    directionalLight->SetRotation(i, 0.0f, 0.0f);
+    wnd->GetGraphics()->ClearFrame(0.0f, 0.0f, 0.0f);
     //-------Draw here-------
 
     //Skybox
@@ -151,7 +161,7 @@ void App::UpdateRender()
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSolid);
     
     //Render map and all objects inside 
-    map->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix()); 
+    map->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix(), ambientLight, directionalLight); 
     player->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
 
     //Render Text  

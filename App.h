@@ -8,6 +8,8 @@
 #include "Skybox.h"
 #include "Map.h"
 #include "Player.h"
+#include "AmbientLight.h"
+#include "DirectionalLight.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Text2D.h"
@@ -39,6 +41,10 @@ private:
 	Text2D* crosshair;
 	Text2D* health;
 	Text2D* cameraDestroyed;
+
+	//Lights
+	AmbientLight* ambientLight;
+	DirectionalLight* directionalLight;
 
 	Keyboard* keyboard;
 	Mouse* mouse;

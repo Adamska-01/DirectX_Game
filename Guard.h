@@ -44,7 +44,7 @@ public:
 	void UpdateLogic(float dt, Player* p, Map* _map);
 private:
 	void AssignState(Player* p);
-	void DealDamage(float _dmg);
+	void DealDamageToSelf(float _dmg);
 public:
 	void CheckCollisionAndDamage(std::vector<Projectile*>const & _projectiles);
 	void UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection);

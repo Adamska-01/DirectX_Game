@@ -24,6 +24,11 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
 
 Guard::~Guard()
 {
+    if (model != nullptr)
+    {
+        delete model;
+        model = nullptr;
+    }
 }
 
 void Guard::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture)
@@ -153,7 +158,7 @@ void Guard::AssignState(Player* p)
     }
 }
 
-void Guard::DealDamage(float _dmg)
+void Guard::DealDamageToSelf(float _dmg)
 {
     health -= _dmg;
     std::clamp(health, 0.0f, 100.0f);
@@ -168,7 +173,7 @@ void Guard::CheckCollisionAndDamage(std::vector<Projectile*>const & _projectiles
         _projectiles[i]->CalculateBoundingSphereWorldPos();
         if(CollisionHandler::SphereToSphereCollision(sphere, _projectiles[i]->sphere))
         {
-            DealDamage(_projectiles[i]->GetDamage());
+            DealDamageToSelf(_projectiles[i]->GetDamage());
             _projectiles[i]->SetDestruction(true);
             modColour = true;
         }

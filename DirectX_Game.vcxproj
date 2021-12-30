@@ -182,6 +182,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="SecurityCamera.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Text2D.cpp" />
     <ClCompile Include="Textures.cpp" />
@@ -250,6 +251,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SecurityCamera.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Text2D.h" />
     <ClInclude Include="Textures.h" />

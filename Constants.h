@@ -1,8 +1,5 @@
 #pragma once
-#include <string>
-#include <DirectXMath.h>
-#define XM_NO_INTRINSICS_   //Use less optimal but more compatible code 
-#define XM_NO_ALLIGNMENT_
+#include <string> 
 
 namespace Constants
 {

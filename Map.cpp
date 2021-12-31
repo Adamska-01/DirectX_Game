@@ -2,12 +2,14 @@
 
 Map::Map(std::string filePath, Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _context)
 {
-	//Loads map from file
+	//Loads map from .txt file
 	IOFunctions::LoadMapFromFile(filePath, gridMap);
 
+	//Set offset values
 	width = gridMap[0].length();
 	height = gridMap.size(); 
 
+	//Assign subsystem variables
 	gfx = _gfx;
 	pDevice = _device;
 	pImmContext = _context; 
@@ -163,6 +165,7 @@ void Map::Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, Di
 
 void Map::Clean()
 {
+	//Deallocate map bricks 
 	for (int i = 0; i < bricksNumber; i++)
 	{
 		delete bricks[i];
@@ -170,6 +173,7 @@ void Map::Clean()
 	}
 	bricks.clear();
 
+	//Deallocate guards
 	int lengthGuards = guards.size();
 	for (int i = 0; i < lengthGuards; i++)
 	{
@@ -177,6 +181,15 @@ void Map::Clean()
 		guards[i] = nullptr;
 	}
 	guards.clear(); 
+
+	//Deallocate security cameras
+	int lengthCameras = secCamera.size();
+	for (int i = 0; i < lengthCameras; i++)
+	{
+		delete secCamera[i];
+		secCamera[i] = nullptr;
+	}
+	secCamera.clear();
 }
 
 void Map::PlaceGroundFloor(int _row, int _column, std::map<Constants::Models, ObjFileModel*>& models)

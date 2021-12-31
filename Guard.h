@@ -18,16 +18,19 @@ private:
 	};
 private:
 	Model* model;
+
+	States state;
+	
+	//Stats
 	float health;
 	float speed;
 	float damage;
-	States state;
 	bool modColour;
 
 	XMFLOAT3 startPos;
 	float minAlertDistance;
 
-	//change dir timer stuff
+	//timer stuff
 	float intervalPatrol;
 	float intervalAttack;
 	float intervalColourMod;
@@ -43,17 +46,16 @@ public:
 	void LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture);
 
 	void UpdateLogic(float dt, Player* p, Map* _map);
+	void UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _pointLight);
+	void Draw();
 private:
 	void AssignState(Player* p);
 	void DealDamageToSelf(float _dmg);
-public:
 	void CheckCollisionAndDamage(std::vector<Projectile*>const & _projectiles);
-	void UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _pointLight);
-	void Draw();
-
-	bool IsDead();
-
+	 
+public:
 	//Getters
+	bool IsDead();
 	Model* GetModel();
 
 	//Setters

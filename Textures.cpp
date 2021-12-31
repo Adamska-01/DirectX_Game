@@ -31,6 +31,7 @@ HRESULT Textures::SetTexture(Graphics* gfx, std::string _texture)
 
 void Textures::Bind(Graphics* gfx, std::string _texture)
 {
+    //Set sampler and shader 
     GetContext(gfx)->PSSetSamplers(0, 1, &pSampler);
     GetContext(gfx)->PSSetShaderResources(0, 1, &textureMap[_texture]);
 }

@@ -41,7 +41,7 @@ HRESULT Keyboard::ReadInputStates()
         }
     }
 
-    //Assign key states
+    //Assign new key states
     int length = sizeof(keyboardStates) / sizeof(keyboardStates[0]);
     for (int i = 0; i < length; i++)
     {

@@ -21,6 +21,12 @@ Player::Player(Map* _map, Keyboard* kbd, Mouse* ms, Graphics* _gfx, ID3D11Device
 	speedBoost = 10.0f;
 	jumpSpeed = 19.0f;
 	cameraSpeed = 0.1f;
+
+	jumpForce = 90.0f;
+	gravity = 6.5f;
+
+	fireRate = 0.2f;
+	currentTime = 0.0f;
 }
 
 Player::~Player()
@@ -59,6 +65,7 @@ void Player::UpdateLogic(float dt)
 	{
 		Jump(jumpForce);
 	}
+	//Run
 	if (keyboard->IsKeyPressed(DIK_LSHIFT))
 	{
 		speed = speedValue + speedBoost;
@@ -73,6 +80,7 @@ void Player::UpdateLogic(float dt)
 	//Shoot
 	if (mouse->IsLeftClickDown() && currentTime >= fireRate)
 	{
+		//Instantiate a new projctile and give it a position
 		projectiles.push_back(new Projectile(gfx, pDevice, pImmContext));
 		projectiles.back()->LoadObjModel(projectileModel, Constants::modelVS, Constants::modelPS, Constants::goldTX);
 		projectiles.back()->Scale(0.1f, 0.1f, 0.1f);
@@ -83,6 +91,7 @@ void Player::UpdateLogic(float dt)
 
 		currentTime = 0.0f;
 	}
+
 
 	//projectiles update 
 	int length = projectiles.size();
@@ -100,6 +109,7 @@ void Player::UpdateLogic(float dt)
 			--length;
 		}
 	} 
+
 
 	Gravity(dt); 
 }
@@ -193,7 +203,7 @@ void Player::Up(float dt)
 	{
 		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
 		{
-			velocity.y = 0.0f;
+			velocity.y = 0.0f; //stop jump
 			return;
 		}
 	}
@@ -213,7 +223,7 @@ void Player::Down(float dt)
 	{
 		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
 		{
-			velocity.y = 0.0f;
+			velocity.y = 0.0f; //Stop player from drowning to the ground
 			return;
 		}
 	}

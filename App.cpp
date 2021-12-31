@@ -3,7 +3,9 @@
 
 App::App()
 	:
-	wnd(new Window(800, 600, "DirectX_Game"))
+	wnd(new Window(800, 600, "DirectX_Game")),
+    currentWidth(wnd->GetWidth()),
+    currentHeight(wnd->GetHeight())
 { 
     //Create models
     models[Constants::Models::CUBE] = new ObjFileModel("Assets/Models/cube.obj", wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
@@ -36,19 +38,20 @@ App::App()
     keyboard = new Keyboard(wnd->GetHINST(), wnd->GetHWND());
     mouse = new Mouse(wnd->GetHINST(), wnd->GetHWND());
     
-    
-    //Load map
+    //Game stuff
     map = new Map("Assets/Map.txt", wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
 
     player = new Player(map, keyboard, mouse, wnd->GetGraphics(), wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext, models[Constants::Models::SPHERE]);
     player->GetCamera()->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
     
+    //Load map
     map->LoadMap(models, player);
 
+    //UI
     framerateText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     crosshair = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
-    health = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
-    cameraDestroyed = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    healthText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    cameraDestroyedText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
 
     //Lights
     ambientLight = new AmbientLight();
@@ -82,15 +85,15 @@ App::~App()
         delete crosshair;
         crosshair = nullptr;
     }
-    if (health != nullptr)
+    if (healthText != nullptr)
     {
-        delete health;
-        health = nullptr;
+        delete healthText;
+        healthText = nullptr;
     }
-    if (cameraDestroyed != nullptr)
+    if (cameraDestroyedText != nullptr)
     {
-        delete cameraDestroyed;
-        cameraDestroyed = nullptr;
+        delete cameraDestroyedText;
+        cameraDestroyedText = nullptr;
     }
     std::map<Constants::Models, ObjFileModel*>::iterator it;
     for (it = models.begin(); it != models.end(); it++)
@@ -98,6 +101,7 @@ App::~App()
         delete it->second;
         it->second = nullptr;
     }
+    //Bindables clean up
     VertexShader::GetInstance()->Clean();
     PixelShader::GetInstance()->Clean();
     Textures::GetInstance()->Clean(); 
@@ -124,11 +128,13 @@ int App::Loop()
 { 
     while (true)
     {
-        if (const auto ecode = Window::ProcessMessages())   //Looks for messages and return if QUIT
+        //Looks for messages and return optional if QUIT
+        if (const auto ecode = Window::ProcessMessages())   
         {
             return *ecode;
         } 
 
+        //Game loop
         UpdateLogic(); 
         UpdateRender();
     } 
@@ -137,36 +143,44 @@ int App::Loop()
 
 void App::UpdateLogic()
 {
+    //Start timer
     timer.StartClock(); 
 
+    //Update input
     keyboard->ReadInputStates();
     mouse->ReadInputStates(); 
-    player->GetCamera()->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
 
-    //Move Camera
-    float dt = 1.0f;
+    //Set projection values 
+    if (currentWidth != wnd->GetWidth() || currentHeight != wnd->GetHeight())
+    {
+        player->GetCamera()->SetProjectionValues(90.0f, static_cast<float>(wnd->GetWidth()) / static_cast<float>(wnd->GetHeight()), 0.01f, 1000.0f);
+
+        currentWidth = wnd->GetWidth();
+        currentHeight = wnd->GetHeight();
+    }
+    
+    //--------------------UPDATE ENTITIES-------------------- 
     player->UpdateLogic(FrameTimer::DeltaTime());
-    map->UpdateLogic(FrameTimer::DeltaTime(), player);
-       
     skybox->SetPosition(player->GetCamera()->GetPositionVector());
 
-    wnd->GetGraphics()->RenderFrame(); 
+    map->UpdateLogic(FrameTimer::DeltaTime(), player); 
 }
 
 void App::UpdateRender()
 {
+    //Rotate directional light
     i += 6.0f * FrameTimer::DeltaTime();
     if (i > 360.0f)
         i = 0.0f;
     directionalLight->SetRotation(i, 0.0f, i);
 
-
+    //Move point light around
     XMFLOAT3 newPos = pointLightStartPos;
     newPos.x = sin(FrameTimer::Time() / 1000.0f);
     pointLight->SetPosition(newPos.x *defaultValue + pointLightStartPos.x, newPos.y, newPos.z);
 
     wnd->GetGraphics()->ClearFrame(0.0f, 0.0f, 0.0f);
-    //-------Draw here-------
+    //-----------------------RENDER HERE-----------------------  
 
     //Skybox
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSkyBox);
@@ -180,26 +194,28 @@ void App::UpdateRender()
     map->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix(), ambientLight, directionalLight, pointLight); 
     player->Draw(player->GetCamera()->GetViewMatrix(), player->GetCamera()->GetProjetionMatrix());
 
-    //Render Text  
+    //Render UI  
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->rastStateCullNone);
     wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendEnable, 0, 0xffffffff);
+    
     framerateText->AddText("FPS " + std::to_string(FrameTimer::Frames()), -1.0f, 1.0f, 0.05f);
     framerateText->RenderText();                    
 
     crosshair->AddText(" ", -0.04f, 0.04f, 0.08f);
     crosshair->RenderText();        
 
-    health->AddText("Health " + std::to_string(player->GetHealth()), -1.0f, -0.8f, 0.09f);
-    health->RenderText();
+    healthText->AddText("Health " + std::to_string(player->GetHealth()), -1.0f, -0.8f, 0.09f);
+    healthText->RenderText();
 
-    cameraDestroyed->AddText("Cameras to destroy " + std::to_string(map->GetCameras().size()), -0.3f, 1.0f, 0.06f);
-    cameraDestroyed->RenderText();                    
+    cameraDestroyedText->AddText("Cameras to destroy " + std::to_string(map->GetCameras().size()), -0.3f, 1.0f, 0.06f);
+    cameraDestroyedText->RenderText();                    
+    
     wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendDisable, 0, 0xffffffff);
-
-
-    //------Finish draw------ 
+     
+    //-----------------------END RENDER-----------------------  
     wnd->GetGraphics()->RenderFrame();
 
+    //Update timer
     timer.EndClock();
     timer.DelayByFrameTime();
 }

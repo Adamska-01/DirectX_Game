@@ -16,6 +16,7 @@ struct VOutTX
     float2 texcoord : TEXCOORD;
 };
 
+//Constant buffer
 cbuffer CBuffer0
 {
     matrix worldViewProjection; //64 bytes
@@ -29,32 +30,7 @@ cbuffer CBuffer0
     float3 pointLightAttenuation; //12 bytes
     float range; //4 bytes 
 };// Total: 224 bytes;
-
-VOut main( float4 position : POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal : NORMAL ) 
-{
-	VOut output; 
-    
-    output.position = mul(worldViewProjection, position); //mul multiplies a vertex model space position by a matrix
-    
-    //Point light
-    float4 lightVector = pointLightPos - position;
-    float pointAmount = dot(normalize(lightVector), normal);
-    pointAmount = saturate(pointAmount);    //clamp
-    //Attenuation
-    float dist = distance(position, pointLightPos);
-    float4 pointLightAtt = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    if (dist < range)
-        pointLightAtt = (pointLightColour * pointAmount) / (pointLightAttenuation[0] + (pointLightAttenuation[1] * dist) + (pointLightAttenuation[2] * dist * dist));
-
-    //Directional light
-    float diffuseAmount = dot(directionalLightVector, normal);
-    diffuseAmount = saturate(diffuseAmount); //clamp
-    
-    output.color = ambientLightColour + colourModifier + (directionalLightColour * diffuseAmount) + pointLightAtt;
-    output.texcoord = texcoord.xy;
-	
-    return output;
-}
+ 
  
 VOutTX TextVS(float4 position : POSITION, float2 texcoord : TEXCOORD)
 {
@@ -79,10 +55,10 @@ VOut ModelVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3 norm
     float4 lightVector = pointLightPos - position;
     float pointAmount = dot(normalize(lightVector), normal);
     pointAmount = saturate(pointAmount); //clamp
-    //Attenuation
+    //Point light Attenuation
     float dist = distance(position, pointLightPos);
     float4 pointLightAtt = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    if (dist < range)
+    if (dist < range) //Check if within range
         pointLightAtt = (pointLightColour * pointAmount) / (pointLightAttenuation[0] + (pointLightAttenuation[1] * dist) + (pointLightAttenuation[2] * dist * dist));
 
     //Directional light
@@ -120,6 +96,8 @@ VOutSky ReflectVS(float4 position : POSITION, float2 texcoord : TEXCOORD, float3
     
     //Obtain the reverse eye vector 
     float3 eyer = -normalize(wvpos);
+    
+    output.color = colourModifier;
     
     //Compute the reflection vector 
     output.texcoord = 2.0 * dot(eyer, wvNormal) * wvNormal - eyer;

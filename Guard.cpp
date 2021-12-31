@@ -8,10 +8,11 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
 {
     health = 100.0f;
     speed = 13.0f;
+    damage = 5.0f;
 
     state = States::PATROLLING;
-    minAlertDistance = 20.0f;
 
+    //Time-based variables 
     currentTimePatrol = 0.0f;
     currentTimeAttack = 0.0f;
     currentTimeColourMod = 0.0f;
@@ -19,9 +20,9 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
     intervalPatrol = 3.0f;
     intervalAttack = 1.5f;
     intervalToRespawn = 2.0f;
-    intervalColourMod = 0.3f;
+    intervalColourMod = 0.2f;
 
-    damage = 5.0f;
+    minAlertDistance = 20.0f; 
 }
 
 Guard::~Guard()
@@ -45,7 +46,7 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
         AdjustPosition(GetForwardVector() * dt * std::abs(speed));
        
         currentTimePatrol += dt;
-        if (currentTimePatrol >= intervalPatrol)
+        if (currentTimePatrol >= intervalPatrol) //Change dir after some time 
         {
             speed *= -1;
             currentTimePatrol = 0.0f;
@@ -83,7 +84,7 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
         AdjustPosition(GetForwardVector() * dt * std::abs(speed));
     }
 
-    //check collisions
+    //Check collisions with map and change direction
     CalculateBoundingSphereWorldPos();
     int length = _map->GetBrickNumber();
     for (int i = 0; i < length; i++)
@@ -98,9 +99,11 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
         }
     }
 
+    //Check collisions with projectiles 
     CheckCollisionAndDamage(p->GetProjectiles());
 
-    if (IsDead()) //Respawn
+    //Respawn if dead
+    if (IsDead()) 
     {
         SetPosition(startPos.x, -100.0f, startPos.z);
         currentTimeRespawn += dt;
@@ -118,8 +121,7 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
         }
     }
 
-    AssignState(p);
-
+    //Allow to modify the colour if the guard is shot by the player 
     if (modColour)
     {
         currentTimeColourMod += dt;
@@ -129,6 +131,9 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
             currentTimeColourMod = 0.0f;
         }
     }
+
+    //AI
+    AssignState(p);
 }
 
 void Guard::AssignState(Player* p)
@@ -136,6 +141,7 @@ void Guard::AssignState(Player* p)
     float distanceFromPlayer = sqrt(pow((p->GetCamera()->GetPositionFloat3().x - pos.x), 2) + pow((p->GetCamera()->GetPositionFloat3().y - pos.y), 2) + pow((p->GetCamera()->GetPositionFloat3().z - pos.z), 2));
     if (state == States::PATROLLING || state == States::GOTOSTART)
     {
+        //Attack if the player is too close 
         if (distanceFromPlayer <= minAlertDistance)
         {
             state = States::ATTACK;
@@ -144,6 +150,7 @@ void Guard::AssignState(Player* p)
     }
     if (state == States::ATTACK)
     {
+        //Go back to starting pos if player is too far
         if (distanceFromPlayer > minAlertDistance)
         {
             state = States::GOTOSTART;
@@ -153,6 +160,7 @@ void Guard::AssignState(Player* p)
     {
         float distanceFromStart = sqrt(pow((startPos.x - pos.x), 2) + pow((startPos.y - pos.y), 2) + pow((startPos.z - pos.z), 2));
 
+        //Go to patrolling state if the player is too far
         if (distanceFromStart <= 0.05f)
         {
             state = States::PATROLLING;
@@ -176,8 +184,10 @@ void Guard::CheckCollisionAndDamage(std::vector<Projectile*>const & _projectiles
         _projectiles[i]->CalculateBoundingSphereWorldPos();
         if(CollisionHandler::SphereToSphereCollision(sphere, _projectiles[i]->sphere))
         {
+            //Deal damage to self and sets projectile destruction
             DealDamageToSelf(_projectiles[i]->GetDamage());
             _projectiles[i]->SetDestruction(true);
+            //Modify colour if the player hits the shot
             modColour = true;
         }
     }
@@ -187,7 +197,7 @@ void Guard::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection, AmbientLight*
 {
     if (modColour)
     {
-        XMVECTOR colourMod = XMVectorSet(0.0f, 15.0f, 0.0f, 0.0f);
+        XMVECTOR colourMod = XMVectorSet(2.0f, 2.0f, 1.0f, 1.0f); 
         model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod, _ambLight, _dirLight, _pointLight);
     }
     else

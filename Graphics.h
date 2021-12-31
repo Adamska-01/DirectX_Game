@@ -16,12 +16,13 @@ public:
 
 	void ClearFrame(float _r, float _g, float _b);
 	void RenderFrame(); 
-private:
+
+private: //Subsystems creation
 	HRESULT CreateSwapChain(HWND hWnd);
 	HRESULT CreateBackBuffer();
 	HRESULT CreateZBuffer(HWND hWnd); 
 	void CreateViewPort(HWND hWnd);
-private:
+private: //Blend and stencil states 
 	HRESULT CreateBlendStates();
 	HRESULT CreateDepthStencilStates();
 	HRESULT CreateRasterizerStates();

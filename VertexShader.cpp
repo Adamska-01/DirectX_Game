@@ -45,6 +45,7 @@ HRESULT VertexShader::SetShaderAndIL(Graphics* gfx, std::string _shader, D3D11_I
 
 void VertexShader::Bind(Graphics* gfx, std::string _shader)
 {
+	//Set shader and input layout
 	GetContext(gfx)->VSSetShader(VSmap[_shader].vsShader, nullptr, 0u);
 	GetContext(gfx)->IASetInputLayout(VSmap[_shader].inputLayout);
 }

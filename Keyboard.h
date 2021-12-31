@@ -19,6 +19,7 @@ public:
 
 	HRESULT ReadInputStates() override;
 
+	//Check for keyboard input
 	bool IsKeyDown(unsigned char _key);
 	bool IsKeyPressed(unsigned char _key);
 	bool IsKeyUp(unsigned char _key);

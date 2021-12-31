@@ -6,6 +6,9 @@ Projectile::Projectile(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContex
 { 
 	speed = 85.0f;
 	damage = 20.0f;
+
+	currentTime = 0.0f;
+	timeToDestroy = 5.0f;
 }
 
 void Projectile::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture)
@@ -15,9 +18,12 @@ void Projectile::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::st
 
 void Projectile::UpdateLogic(float dt)
 {
+	//Movement (forward)
 	XMMATRIX vecRotationMatrix = XMMatrixRotationRollPitchYaw(rot.x, rot.y, 0.0f);
 	vec_forward = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
 	AdjustPosition(GetForwardVector() * dt * speed);
+	
+	//Set destructiona after some time
 	currentTime += dt;
 	if (currentTime >= timeToDestroy)
 	{

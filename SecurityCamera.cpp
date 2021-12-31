@@ -7,9 +7,19 @@ SecurityCamera::SecurityCamera(Graphics* _gfx, ID3D11Device* _device, ID3D11Devi
 	:
 	model(new Model(_gfx, _device, _immContext))
 {
+	//Stats
 	health = 100.0f;
-	rangeToDamage = 15.0f;
+	rangeToDamage = 20.0f;
+	damagePerSec = 5.0f;
+	
 	rotRange = .7f;
+	startRot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	modColour = false; 
+
+	//Timer stuff (colourMode)
+	currentTimeColourMod = 0.0f;
+	intervalColourMod = 0.2f;
 }
 
 SecurityCamera::~SecurityCamera()
@@ -32,14 +42,47 @@ void SecurityCamera::UpdateLogic(float dt, Player* p)
 	float vl = sin(FrameTimer::Time() / 1000.0f);
 	SetRotation(startRot.x, startRot.y + rotRange * vl, startRot.z);
 
+	//Deal damage to player if too close
 	float distanceFromPlayer = sqrt(pow((p->GetCamera()->GetPositionFloat3().x - pos.x), 2) + pow((p->GetCamera()->GetPositionFloat3().y - pos.y), 2) + pow((p->GetCamera()->GetPositionFloat3().z - pos.z), 2));
 	if (distanceFromPlayer <= rangeToDamage)
 	{
-		//TODO: deal damage to player
+		p->DealDamageToSelf(damagePerSec * dt);
 	}
 
+	//Deal damage to self if hit by projectile
 	CheckCollisionAndDamage(p->GetProjectiles());
+
+	//Allow to modify the colour if the guard is shot by the player 
+	if (modColour)
+	{
+		currentTimeColourMod += dt;
+		if (currentTimeColourMod >= intervalColourMod)
+		{
+			modColour = false;
+			currentTimeColourMod = 0.0f;
+		}
+	}
 } 
+
+void SecurityCamera::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
+{
+	//Set colour mod if hit by projectile
+	if (modColour)
+	{
+		XMVECTOR colourMod = XMVectorSet(2.0f, 1.0f, 1.0f, 1.0f);
+		model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
+	}
+	else
+	{
+		XMVECTOR colourMod = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+		model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
+	}
+}
+
+void SecurityCamera::Draw()
+{
+	model->Draw();
+}
 
 void SecurityCamera::CheckCollisionAndDamage(std::vector<Projectile*> const& _projectiles)
 {
@@ -59,24 +102,6 @@ void SecurityCamera::CheckCollisionAndDamage(std::vector<Projectile*> const& _pr
 	}
 }
 
-void SecurityCamera::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
-{
-	if (modColour)
-	{
-		XMVECTOR colourMod = XMVectorSet(15.0f, 0.0f, 0.0f, 0.0f);
-		model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
-	}
-	else
-	{
-		XMVECTOR colourMod = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
-	}
-}
-
-void SecurityCamera::Draw()
-{
-	model->Draw();
-}
 
 void SecurityCamera::DealDamageToSelf(float _dmg)
 {

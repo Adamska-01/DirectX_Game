@@ -23,6 +23,7 @@ public:
 
 	HRESULT ReadInputStates() override;
 
+	//Check for mouse input
 	bool IsLeftClickDown();
 	bool IsLeftClickPressed();
 	bool IsLeftClickUp(); 

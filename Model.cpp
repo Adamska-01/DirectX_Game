@@ -40,11 +40,7 @@ HRESULT Model::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::stri
     cBufDesc.ByteWidth = 240;    //MUST be a multiple of 16, calculate from CB struct
     cBufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;    //Use as a constant buffer
     hr = pD3DDevice->CreateBuffer(&cBufDesc, NULL, &pConstantBuffer);
-    if (FAILED(hr)) return hr;
-
-    //Calculate bounding sphere
-    CalculateModelCentrePoint();
-    CalculateBoundingSphereRadius();
+    if (FAILED(hr)) return hr; 
 
     return hr;
 }
@@ -94,98 +90,7 @@ void Model::UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos
     pImmediateContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
     //upload the new values for the constant buffer 
     pImmediateContext->UpdateSubresource(pConstantBuffer, 0, 0, &cb, 0, 0);
-}  
-
-void Model::CalculateModelCentrePoint()
-{
-    XMFLOAT3 minBound = { 0.0f,0.0f,0.0f };
-    XMFLOAT3 maxBound = { 0.0f,0.0f,0.0f };
-    for (int i = 0; i < pObject->numverts; i++)
-    {
-        //X
-        if (pObject->vertices[i].Pos.x > maxBound.x)
-            maxBound.x = pObject->vertices[i].Pos.x;
-        if (pObject->vertices[i].Pos.x < minBound.x)
-            minBound.x = pObject->vertices[i].Pos.x;
-           
-        //Y
-        if (pObject->vertices[i].Pos.y > maxBound.y)
-            maxBound.y = pObject->vertices[i].Pos.y;
-        if (pObject->vertices[i].Pos.y < minBound.y)
-            minBound.y = pObject->vertices[i].Pos.y;
-
-        //Z
-        if (pObject->vertices[i].Pos.z > maxBound.z)
-            maxBound.z = pObject->vertices[i].Pos.z;
-        if (pObject->vertices[i].Pos.z < minBound.z)
-            minBound.z = pObject->vertices[i].Pos.z;
-    }
-
-    //Calculate model centre
-    XMFLOAT3 maxMinusmin = { (maxBound.x - minBound.x) / 2, (maxBound.y - minBound.y) / 2, (maxBound.z - minBound.z) / 2 };
-    XMFLOAT3 minPlusMaxMinusMin = { minBound.x + maxMinusmin.x,  minBound.y + maxMinusmin.y, minBound.z + maxMinusmin.z };
-    
-    colSphereCentre = minPlusMaxMinusMin; 
-}
-
-void Model::CalculateBoundingSphereRadius()
-{ 
-    for (int i = 0; i < pObject->numverts; i++)
-    {
-        float rad = sqrt(pow((colSphereCentre.x - pObject->vertices[i].Pos.x), 2) + pow((colSphereCentre.y - pObject->vertices[i].Pos.y), 2) + pow((colSphereCentre.z - pObject->vertices[i].Pos.z), 2));
-        
-        if (colSphereRadius < rad)
-            colSphereRadius = rad;
-    } 
-}
-
-XMVECTOR Model::GetBoundingSphereWorldSpacePosition()
-{
-    //Set world matrix 
-    XMMATRIX scale = XMMatrixScaling(this->scale.x, this->scale.y, this->scale.z);
-    XMMATRIX rot = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
-    XMMATRIX pos = XMMatrixTranslation(position.x, position.y, position.z);
-
-    XMMATRIX world = scale * rot * pos;
-
-    XMVECTOR offset = XMLoadFloat3(&colSphereCentre);
-    offset = XMVector3Transform(offset, world);
-    
-    return offset;
-}
-
-float Model::GetBoundingSphereRadius()
-{
-    return colSphereRadius * scale.x; //Does not support xyz scale
-}
-
-bool Model::CheckCollision(Model* _model)
-{
-    if (_model == this)
-        return false;
-
-    XMVECTOR spherePos = GetBoundingSphereWorldSpacePosition();
-    XMVECTOR _spherePos = _model->GetBoundingSphereWorldSpacePosition();
-
-    XMFLOAT3 pos; XMStoreFloat3(&pos, spherePos);
-    XMFLOAT3 _pos; XMStoreFloat3(&_pos, _spherePos);
-
-    float distance = sqrt(pow((pos.x - _pos.x), 2) + pow((pos.y - _pos.y), 2) + pow((pos.z - _pos.z), 2));
-
-    float radius = GetBoundingSphereRadius();
-    float _radius = _model->GetBoundingSphereRadius();
-
-    if (distance <= (radius + _radius))
-        return true;
-
-    return false;
-}
-
-void Model::SetShaders(std::string _vs, std::string _ps)
-{
-    vsShader = _vs;
-    psShader = _ps;
-}
+} 
 
 void Model::Draw()
 {
@@ -197,6 +102,12 @@ void Model::Draw()
     Textures::GetInstance()->Bind(gfx, texture);  
 
     pObject->Draw();
+} 
+
+void Model::SetShaders(std::string _vs, std::string _ps)
+{
+    vsShader = _vs;
+    psShader = _ps;
 } 
 
 ObjFileModel* Model::GetVertexBuffer()

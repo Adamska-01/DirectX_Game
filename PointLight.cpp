@@ -19,7 +19,7 @@ const XMFLOAT3 PointLight::GetAttenuation()
 const XMVECTOR PointLight::GetInversePos(XMMATRIX _world)
 {
 	XMVECTOR determinant;
-	XMMATRIX inverse = XMMatrixInverse(&determinant, _world);
+	XMMATRIX inverse = XMMatrixInverse(&determinant, _world); //inverse matrix
 
 	return XMVector3Transform(XMLoadFloat3(&pos), inverse);
 }

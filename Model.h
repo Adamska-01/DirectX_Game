@@ -32,17 +32,13 @@ private:
 	ID3D11Buffer* pConstantBuffer = nullptr;
 	Graphics* gfx;
 
-	std::string vsShader, psShader, texture;  
-private:
 	ObjFileModel* pObject = nullptr;
 
+	std::string vsShader, psShader, texture;  
+private: 
 	XMFLOAT3 position;
 	XMFLOAT3 rotation;
-	XMFLOAT3 scale;
-	  
-private: 
-	XMFLOAT3 colSphereCentre; 
-	float colSphereRadius;
+	XMFLOAT3 scale; 
 
 public:
 	Model(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext);
@@ -50,17 +46,10 @@ public:
 
 	HRESULT LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture);
 	void UpdateConstantBf(XMMATRIX _view, XMMATRIX _projection, XMVECTOR _pos, XMVECTOR _rot, XMVECTOR _scale, XMVECTOR _clMod, AmbientLight* _ambLight = nullptr, DirectionalLight* _dirLight = nullptr, PointLight* _pointLight = nullptr);
-	//Sphere collision
-	void CalculateModelCentrePoint();
-	void CalculateBoundingSphereRadius();
-	XMVECTOR GetBoundingSphereWorldSpacePosition();
-	float GetBoundingSphereRadius();
-	bool CheckCollision(Model* _model);
+	void Draw();
 private:
 	void SetTexture(std::string _texture);
 	void SetShaders(std::string _vs, std::string _ps);
 public:
-	void Draw();
- 
 	ObjFileModel* GetVertexBuffer();
 };

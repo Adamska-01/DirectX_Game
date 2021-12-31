@@ -23,35 +23,33 @@ public:
 	App();
 	~App();
 
-	//Message loop
-	int Loop();  
+	int Loop();  //Message loop
 private:
 	void UpdateLogic();
 	void UpdateRender();
 
 private:
-	Window* wnd; 
-	float i = 0.0f;
-
+	//Subsystems
+	Window* wnd; int currentWidth, currentHeight;
 	std::map<Constants::Models, ObjFileModel*> models;
-	Skybox* skybox;
-	Map* map;
+	Keyboard* keyboard;
+	Mouse* mouse; 
+	//FPS counter and dt
+	FrameTimer timer;
+	 
 	Player* player;
+	Map* map;
 
+	Skybox* skybox;
+
+	//UI
 	Text2D* framerateText;
 	Text2D* crosshair;
-	Text2D* health;
-	Text2D* cameraDestroyed;
+	Text2D* healthText;
+	Text2D* cameraDestroyedText;
 
 	//Lights
 	AmbientLight* ambientLight;
-	DirectionalLight* directionalLight;
-	PointLight* pointLight;
-	XMFLOAT3 pointLightStartPos;
-	float defaultValue;
-
-	Keyboard* keyboard;
-	Mouse* mouse;
-
-	FrameTimer timer;
+	DirectionalLight* directionalLight; float i = 0.0f;
+	PointLight* pointLight; XMFLOAT3 pointLightStartPos; float defaultValue;   
 };

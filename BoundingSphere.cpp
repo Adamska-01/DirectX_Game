@@ -42,5 +42,6 @@ void BoundingSphere::CalculateBoundingSphereRadius(ObjFileModel* _pObj, float _s
             radius = rad;
     }
 
+    //Scale radius after calculation
     radius *= _scale;
 }

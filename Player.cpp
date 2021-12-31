@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "CollisionHandler.h"
+#include <algorithm>
 
 Player::Player(Map* _map, Keyboard* kbd, Mouse* ms, Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext, ObjFileModel* prjModel)
 	:
@@ -243,6 +244,12 @@ void Player::Gravity(float dt)
 bool Player::IsDead()
 {
 	return health <= 0; 
+}
+
+void Player::DealDamageToSelf(float _dmg)
+{
+	health -= _dmg;
+	std::clamp(health, 0.0f, 100.0f);
 }
 
 void Player::SetStartPos(float _x, float _y, float _z)

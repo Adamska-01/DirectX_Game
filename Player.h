@@ -55,7 +55,10 @@ public:
 
 	void Gravity(float dt);
 
+	//Getters
 	bool IsDead();
+
+	void DealDamageToSelf(float _dmg);
 
 	void SetStartPos(float _x, float _y, float _z);
 

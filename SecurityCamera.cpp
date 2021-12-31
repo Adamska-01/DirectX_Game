@@ -51,6 +51,8 @@ void SecurityCamera::CheckCollisionAndDamage(std::vector<Projectile*> const& _pr
 		if (CollisionHandler::SphereToSphereCollision(sphere, _projectiles[i]->sphere))
 		{
 			DealDamageToSelf(_projectiles[i]->GetDamage());
+			if (IsDead())
+				canDestroy = true;
 			_projectiles[i]->SetDestruction(true);
 			modColour = true;
 		}
@@ -89,7 +91,12 @@ Model* SecurityCamera::GetModel()
 
 bool SecurityCamera::IsDead()
 {
-	return false;
+	return health <= 0.0f;
+}
+
+bool SecurityCamera::CanDestroy()
+{
+	return canDestroy;
 }
 
 void SecurityCamera::SetStartRot(float _x, float _y, float _z)

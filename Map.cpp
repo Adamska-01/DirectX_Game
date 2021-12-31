@@ -122,6 +122,17 @@ void Map::UpdateLogic(float dt, Player* p)
 	{
 		secCamera[i]->UpdateLogic(dt, p);
 	}
+	//Destroy cameras if they're shot
+	for (int i = 0; i < lengthCameras; i++) 
+	{
+		if (secCamera[i]->CanDestroy())
+		{
+			delete secCamera[i];
+			secCamera[i] = nullptr;
+			secCamera.erase(secCamera.begin() + i);
+			--lengthCameras;
+		}
+	}
 }
 
 void Map::Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _ptLight)

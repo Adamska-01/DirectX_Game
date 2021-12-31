@@ -20,6 +20,7 @@ private:
 	Model* model;
 	float health;
 	float speed;
+	float damage;
 	States state;
 	bool modColour;
 

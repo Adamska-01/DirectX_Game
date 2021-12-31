@@ -54,10 +54,10 @@ App::App()
     ambientLight = new AmbientLight();
     ambientLight->SetColour(0.3f, 0.3f, 0.3f, 1.0f); //Grey;
     directionalLight = new DirectionalLight();
-    directionalLight->SetColour(0.98f, 0.84f, 0.11f, 0.0f); //Sun colour
-    directionalLight->SetDirection(0.5f, 0.5f, -1.0f);
+    directionalLight->SetColour(0.84f, 0.84f, 0.82f, 0.0f); //Sun colour
+    directionalLight->SetDirection(-0.5f, -0.5f, 1.0f);
     pointLight = new PointLight();
-    pointLight->SetColour(0.0f, 15.0f, 0.0f, 1.0f);
+    pointLight->SetColour(0.0f, 5.0f, 0.0f, 1.0f);
     pointLight->SetAttenuation(XMFLOAT3(0.0f, 1.0f, 0.0f));
     pointLight->SetRange(5.0f);
     pointLight->SetPosition(player->GetCamera()->GetPositionFloat3().x, player->GetCamera()->GetPositionFloat3().y, player->GetCamera()->GetPositionFloat3().z + 40.0f);
@@ -155,10 +155,10 @@ void App::UpdateLogic()
 
 void App::UpdateRender()
 {
-    i += 10.0f * FrameTimer::DeltaTime();
+    i += 6.0f * FrameTimer::DeltaTime();
     if (i > 360.0f)
         i = 0.0f;
-    directionalLight->SetRotation(i, 0.0f, 0.0f);
+    directionalLight->SetRotation(i, 0.0f, i);
 
 
     XMFLOAT3 newPos = pointLightStartPos;

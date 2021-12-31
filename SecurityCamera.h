@@ -15,7 +15,7 @@ private:
 	XMFLOAT3 startRot;
 	bool modColour;
 	float rotRange;
-
+	bool canDestroy = false; 
 
 public:
 	SecurityCamera(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext);
@@ -33,6 +33,7 @@ public:
 	//Getters
 	Model* GetModel();
 	bool IsDead();
+	bool CanDestroy();
 
 	//Setters
 	void SetStartRot(float _x, float _y, float _z);

@@ -7,19 +7,21 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
     model(new Model(_gfx, _device, _immContext))
 {
     health = 100.0f;
-    speed = 4.5f;
+    speed = 13.0f;
 
     state = States::PATROLLING;
-    minAlertDistance = 12.5f;
+    minAlertDistance = 20.0f;
 
     currentTimePatrol = 0.0f;
     currentTimeAttack = 0.0f;
     currentTimeColourMod = 0.0f;
     currentTimeRespawn = 0.0f;
-    intervalPatrol = 4.0f;
-    intervalAttack = 2.0f;
+    intervalPatrol = 3.0f;
+    intervalAttack = 1.5f;
     intervalToRespawn = 2.0f;
     intervalColourMod = 0.3f;
+
+    damage = 5.0f;
 }
 
 Guard::~Guard()
@@ -61,7 +63,8 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
             currentTimeAttack += dt;
             if (currentTimeAttack >= intervalAttack)
             {
-                //TODO: attack player
+                //Attack player
+                p->DealDamageToSelf(damage);
 
                 currentTimeAttack = 0.0f;
             }

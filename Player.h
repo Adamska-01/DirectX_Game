@@ -24,8 +24,13 @@ private:
 	XMFLOAT3 startPos;
 	XMFLOAT3 velocity;
 
-	float jumpForce = 28.0f;
-	float gravity = 1.5f;
+	float speed;
+	float speedValue;
+	float speedBoost;
+	float jumpSpeed;
+	float cameraSpeed;
+	float jumpForce = 90.0f;
+	float gravity = 6.5f;
 
 	float fireRate = 0.2f;
 	float currentTime = 0.0f;
@@ -40,15 +45,15 @@ public:
 	void UpdateLogic(float dt); 
 	void Draw(XMMATRIX _view, XMMATRIX _projection);
 
-	void Forward();
-	void BackWards();
-	void Left();
-	void Right();
-	void Up();
-	void Down();
+	void Forward(float dt);
+	void BackWards(float dt);
+	void Left(float dt);
+	void Right(float dt);
+	void Up(float dt);
+	void Down(float dt);
 	void Jump(float jumpforce);
 
-	void Gravity();
+	void Gravity(float dt);
 
 	bool IsDead();
 

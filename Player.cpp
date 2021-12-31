@@ -16,6 +16,10 @@ Player::Player(Map* _map, Keyboard* kbd, Mouse* ms, Graphics* _gfx, ID3D11Device
 	camera->sphere.radius = 4.0f; 
 
 	health = 100.0f;
+	speed = speedValue = 15.0f;
+	speedBoost = 10.0f;
+	jumpSpeed = 19.0f;
+	cameraSpeed = 0.1f;
 }
 
 Player::~Player()
@@ -35,31 +39,36 @@ void Player::UpdateLogic(float dt)
 	//Movement
 	if (keyboard->IsKeyPressed(DIK_W))
 	{
-		Forward();
+		Forward(dt);
 	}
 	if (keyboard->IsKeyPressed(DIK_A))
 	{
-		Left();
+		Left(dt);
 	}
 	if (keyboard->IsKeyPressed(DIK_S))
 	{
-		BackWards();
+		BackWards(dt);
 	}
 	if (keyboard->IsKeyPressed(DIK_D))
 	{
-		Right();
+		Right(dt);
 	}
 	//Jump
-	if (keyboard->IsKeyPressed(DIK_SPACE) && velocity.y == 0.0f)
+	if (keyboard->IsKeyDown(DIK_SPACE) && velocity.y == 0.0f)
 	{
 		Jump(jumpForce);
 	}
-	//Camera rotation
-	if (mouse->IsRightClickPressed())
+	if (keyboard->IsKeyPressed(DIK_LSHIFT))
 	{
-		XMFLOAT2 movement = mouse->GetMouseMovement();
-		camera->AdjustRotation(0.01f * movement.x, 0.01f * movement.y, 0.0f);
+		speed = speedValue + speedBoost;
 	}
+	if (keyboard->IsKeyUp(DIK_LSHIFT))
+	{
+		speed = speedValue;
+	}
+	//Camera rotation 
+	XMFLOAT2 movement = mouse->GetMouseMovement();
+	camera->AdjustRotation(cameraSpeed * movement.x * dt, cameraSpeed * movement.y * dt, 0.0f); 
 	//Shoot
 	if (mouse->IsLeftClickDown() && currentTime >= fireRate)
 	{
@@ -89,10 +98,9 @@ void Player::UpdateLogic(float dt)
 			projectiles.erase(projectiles.begin() + i);
 			--length;
 		}
-	}
+	} 
 
-
-	Gravity(); 
+	Gravity(dt); 
 }
  
 void Player::Draw(XMMATRIX _view, XMMATRIX _projection)
@@ -105,9 +113,9 @@ void Player::Draw(XMMATRIX _view, XMMATRIX _projection)
 	}
 }
 
-void Player::Forward()
+void Player::Forward(float dt)
 {
-	XMVECTOR newPos = camera->GetPositionVector() + camera->GetForwardVector();
+	XMVECTOR newPos = camera->GetPositionVector() + camera->GetForwardVector() * dt * speed;
 	//Calculate new bounding sphere
 	camera->CalculateBoundingSphereWorldPos(newPos);
 
@@ -119,12 +127,12 @@ void Player::Forward()
 	}
 	
 	//No collisions, move
-	camera->AdjustPosition(camera->GetForwardVector());
+	camera->AdjustPosition(camera->GetForwardVector() * dt * speed);
 }
 
-void Player::BackWards()
+void Player::BackWards(float dt)
 {
-	XMVECTOR newPos = camera->GetPositionVector() + camera->GetBackwardVector();
+	XMVECTOR newPos = camera->GetPositionVector() + camera->GetBackwardVector() * dt * speed;
 	//Calculate new bounding sphere
 	camera->CalculateBoundingSphereWorldPos(newPos);
 
@@ -136,12 +144,12 @@ void Player::BackWards()
 	}
 
 	//No collisions, move
-	camera->AdjustPosition(camera->GetBackwardVector());
+	camera->AdjustPosition(camera->GetBackwardVector() * dt * speed);
 }
 
-void Player::Left()
+void Player::Left(float dt)
 {
-	XMVECTOR newPos = camera->GetPositionVector() + camera->GetLeftVector();
+	XMVECTOR newPos = camera->GetPositionVector() + camera->GetLeftVector() * dt * speed;
 	//Calculate new bounding sphere
 	camera->CalculateBoundingSphereWorldPos(newPos);
 
@@ -153,12 +161,12 @@ void Player::Left()
 	}
 
 	//No collisions, move
-	camera->AdjustPosition(camera->GetLeftVector());
+	camera->AdjustPosition(camera->GetLeftVector() * dt * speed);
 }
 
-void Player::Right()
+void Player::Right(float dt)
 {
-	XMVECTOR newPos = camera->GetPositionVector() + camera->GetRightVector();
+	XMVECTOR newPos = camera->GetPositionVector() + camera->GetRightVector() * dt * speed;
 	//Calculate new bounding sphere
 	camera->CalculateBoundingSphereWorldPos(newPos);
 
@@ -170,32 +178,12 @@ void Player::Right()
 	}
 
 	//No collisions, move
-	camera->AdjustPosition(camera->GetRightVector());
+	camera->AdjustPosition(camera->GetRightVector() * dt * speed);
 }
 
-void Player::Up()
+void Player::Up(float dt)
 {
-	XMVECTOR newPos = camera->GetPositionVector() + XMVectorSet(0.0f, 0.2f, 0.0f, 1.0f);
-	//Calculate new bounding sphere
-	camera->CalculateBoundingSphereWorldPos(newPos);
-
-	int length = map->GetBrickNumber();
-	for (int i = 0; i < length; i++)
-	{
-		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
-		{
-			velocity.y = 0.0f;
-			return;
-		}
-	}
-
-	//No collisions, move
-	camera->AdjustPosition(0.0f, 0.2f, 0.0f);
-}
-
-void Player::Down()
-{
-	XMVECTOR newPos = camera->GetPositionVector() + XMVectorSet(0.0f, -0.2f, 0.0f, 1.0f);
+	XMVECTOR newPos = camera->GetPositionVector() + XMVectorSet(0.0f, 0.9f * dt * jumpSpeed, 0.0f, 1.0f);
 	//Calculate new bounding sphere
 	camera->CalculateBoundingSphereWorldPos(newPos);
 
@@ -210,7 +198,27 @@ void Player::Down()
 	}
 
 	//No collisions, move
-	camera->AdjustPosition(0.0f, -0.2f, 0.0f);
+	camera->AdjustPosition(0.0f, 0.9f * dt * jumpSpeed, 0.0f);
+}
+
+void Player::Down(float dt)
+{
+	XMVECTOR newPos = camera->GetPositionVector() + XMVectorSet(0.0f, -0.9f * dt * jumpSpeed, 0.0f, 1.0f);
+	//Calculate new bounding sphere
+	camera->CalculateBoundingSphereWorldPos(newPos);
+
+	int length = map->GetBrickNumber();
+	for (int i = 0; i < length; i++)
+	{
+		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
+		{
+			velocity.y = 0.0f;
+			return;
+		}
+	}
+
+	//No collisions, move
+	camera->AdjustPosition(0.0f, -0.9f * dt * jumpSpeed, 0.0f);
 }
 
 void Player::Jump(float jumpforce)
@@ -218,17 +226,17 @@ void Player::Jump(float jumpforce)
 	velocity.y = jumpforce;
 }
 
-void Player::Gravity()
+void Player::Gravity(float dt)
 {
 	velocity.y -= gravity;
 
 	if (velocity.y > 0)
 	{
-		Up();
+		Up(dt);
 	}
 	else
 	{
-		Down();
+		Down(dt);
 	}
 }
 

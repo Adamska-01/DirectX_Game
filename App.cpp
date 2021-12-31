@@ -48,10 +48,10 @@ App::App()
     map->LoadMap(models, player);
 
     //UI
-    framerateText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    framerateText = new Text2D(Constants::font2, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     crosshair = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     healthText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
-    cameraDestroyedText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    cameraDestroyedText = new Text2D(Constants::font2, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
 
     //Lights
     ambientLight = new AmbientLight();
@@ -207,7 +207,7 @@ void App::UpdateRender()
     healthText->AddText("Health " + std::to_string(player->GetHealth()), -1.0f, -0.8f, 0.09f);
     healthText->RenderText();
 
-    cameraDestroyedText->AddText("Cameras to destroy " + std::to_string(map->GetCameras().size()), -0.3f, 1.0f, 0.06f);
+    cameraDestroyedText->AddText("Cameras to destroy " + std::to_string(map->GetCameras().size()), -0.2f, 1.0f, 0.06f);
     cameraDestroyedText->RenderText();                    
     
     wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendDisable, 0, 0xffffffff);

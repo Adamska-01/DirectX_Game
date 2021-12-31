@@ -34,6 +34,9 @@ private:
 	float gravity;
 	float cameraSpeed;
 
+	//Camera rotation
+	float maxRotX, minRotX;
+
 	//Timer stuff for shooting
 	float fireRate;
 	float currentTime;

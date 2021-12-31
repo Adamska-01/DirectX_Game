@@ -24,6 +24,7 @@ namespace Constants
 
 	//Fonts
 	static std::string font1 = "Assets/Textures/font1.png";
+	static std::string font2 = "Assets/Textures/font1.bmp";
 
 	//Models 
 	static enum class Models

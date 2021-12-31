@@ -27,6 +27,9 @@ Player::Player(Map* _map, Keyboard* kbd, Mouse* ms, Graphics* _gfx, ID3D11Device
 
 	fireRate = 0.2f;
 	currentTime = 0.0f;
+
+	maxRotX = 1.1f;
+	minRotX = -1.1f;
 }
 
 Player::~Player()
@@ -76,7 +79,12 @@ void Player::UpdateLogic(float dt)
 	}
 	//Camera rotation 
 	XMFLOAT2 movement = mouse->GetMouseMovement();
-	camera->AdjustRotation(cameraSpeed * movement.x * dt, cameraSpeed * movement.y * dt, 0.0f); 
+	camera->AdjustRotation(cameraSpeed * movement.x * dt, cameraSpeed * movement.y * dt, 0.0f);  
+	if (camera->GetRotationFloat3().x > maxRotX)
+		camera->SetRotation(maxRotX, camera->GetRotationFloat3().y, camera->GetRotationFloat3().z);
+	else if (camera->GetRotationFloat3().x < minRotX)
+		camera->SetRotation(minRotX, camera->GetRotationFloat3().y, camera->GetRotationFloat3().z);
+
 	//Shoot
 	if (mouse->IsLeftClickDown() && currentTime >= fireRate)
 	{

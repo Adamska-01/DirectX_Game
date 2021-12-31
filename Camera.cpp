@@ -67,7 +67,7 @@ void Camera::AdjustRotation(const XMVECTOR& _rot)
 
 void Camera::AdjustRotation(float _x, float _y, float _z)
 {
-	GameObject::AdjustRotation(_x, _y, _z);
+	GameObject::AdjustRotation(_x, _y, _z); 
 	UpdateViewMatrix();
 }
 

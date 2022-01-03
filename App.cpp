@@ -209,7 +209,7 @@ void App::UpdateLogic()
 
     GameManager::SetCamerasNumber(map->GetCameras().size());
     
-    //--------------------UPDATE ENTITIES-------------------- 
+    //------------------------------UPDATE ENTITIES------------------------------ 
     if (!GameManager::HasWon())
     {
         player->UpdateLogic(FrameTimer::DeltaTime());
@@ -233,7 +233,7 @@ void App::UpdateRender()
     pointLight->SetPosition(newPos.x *defaultValue + pointLightStartPos.x, newPos.y, newPos.z);
 
     wnd->GetGraphics()->ClearFrame(0.0f, 0.0f, 0.0f);
-    //-----------------------RENDER HERE-----------------------  
+    //---------------------------------RENDER HERE---------------------------------  
 
     //Skybox
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->pRasterSkyBox);
@@ -273,7 +273,7 @@ void App::UpdateRender()
 
     wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendDisable, 0, 0xffffffff);
      
-    //-----------------------END RENDER-----------------------  
+    //---------------------------------END RENDER---------------------------------  
     wnd->GetGraphics()->RenderFrame();
 
     //Update timer

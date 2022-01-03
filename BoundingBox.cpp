@@ -2,7 +2,7 @@
 
 void BoundingBox::CalculateMinAndMax(ObjFileModel* _pObj)
 {
-    for (int i = 0; i < _pObj->numverts; i++)
+    for (unsigned int i = 0; i < _pObj->numverts; i++)
     {
         //X
         if (_pObj->vertices[i].Pos.x > maxBound.x)

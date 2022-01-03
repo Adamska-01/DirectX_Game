@@ -39,6 +39,15 @@ Player::~Player()
 		delete camera;
 		camera = nullptr;
 	}
+	if (projectiles.size() > 0)
+	{
+		for (unsigned int i = 0; i < projectiles.size(); i++)
+		{
+			delete projectiles[i];
+			projectiles[i] = nullptr;
+		}
+		projectiles.clear();
+	}
 }
 
 void Player::UpdateLogic(float dt)
@@ -118,6 +127,13 @@ void Player::UpdateLogic(float dt)
 		}
 	} 
 
+	//Respawn
+	if (IsDead())
+	{
+		health = 100.0; 
+		camera->SetPosition(startPos.x, startPos.y, startPos.z);
+		camera->SetRotation(0.0f, 0.0f, 0.0f);
+	}
 
 	Gravity(dt); 
 }
@@ -267,7 +283,7 @@ bool Player::IsDead()
 void Player::DealDamageToSelf(float _dmg)
 {
 	health -= _dmg;
-	std::clamp(health, 0.0f, 100.0f);
+	health = std::clamp(health, 0.0f, 100.0f);
 }
 
 void Player::SetStartPos(float _x, float _y, float _z)
@@ -282,7 +298,7 @@ Camera* Player::GetCamera()
 	return camera;
 }
 
-int Player::GetHealth()
+float Player::GetHealth()
 {
 	return health;
 }

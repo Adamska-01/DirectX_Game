@@ -4,7 +4,7 @@ void BoundingSphere::CalculateModelCentrePoint(ObjFileModel* _pObj)
 {
     XMFLOAT3 minBound = { 0.0f,0.0f,0.0f };
     XMFLOAT3 maxBound = { 0.0f,0.0f,0.0f };
-    for (int i = 0; i < _pObj->numverts; i++)
+    for (unsigned int i = 0; i < _pObj->numverts; i++)
     {
         //X
         if (_pObj->vertices[i].Pos.x > maxBound.x)
@@ -34,9 +34,9 @@ void BoundingSphere::CalculateModelCentrePoint(ObjFileModel* _pObj)
 
 void BoundingSphere::CalculateBoundingSphereRadius(ObjFileModel* _pObj, float _scale)
 {
-    for (int i = 0; i < _pObj->numverts; i++)
+    for (unsigned int i = 0; i < _pObj->numverts; i++)
     {
-        float rad = sqrt(pow((centre.x - _pObj->vertices[i].Pos.x), 2) + pow((centre.y - _pObj->vertices[i].Pos.y), 2) + pow((centre.z - _pObj->vertices[i].Pos.z), 2));
+        float rad = (float)sqrt(pow((centre.x - _pObj->vertices[i].Pos.x), 2) + pow((centre.y - _pObj->vertices[i].Pos.y), 2) + pow((centre.z - _pObj->vertices[i].Pos.z), 2));
 
         if (radius < rad)
             radius = rad;

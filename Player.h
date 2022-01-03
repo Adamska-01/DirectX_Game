@@ -65,7 +65,7 @@ public:
 	//Getters
 	bool IsDead();
 	Camera* GetCamera();
-	int GetHealth();
+	float GetHealth();
 	std::vector<Projectile*> GetProjectiles();
 	
 	//Setters

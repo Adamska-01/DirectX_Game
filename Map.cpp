@@ -135,6 +135,27 @@ void Map::UpdateLogic(float dt, Player* p)
 			--lengthCameras;
 		}
 	}
+
+	//Respawn entities
+	if (p->IsDead())
+	{
+		//guards
+		for (int i = 0; i < lengthGuards; i++)
+		{
+			guards[i]->SetPosition(guards[i]->GetStartPos().x, guards[i]->GetStartPos().y, guards[i]->GetStartPos().z);
+		}
+
+		//Security cameras
+		ObjFileModel* cam = secCamera.back()->GetModel()->GetVertexBuffer();
+		int length = secCamera.size();
+		for (int i = 0; i < lengthCameras; i++)
+		{
+			delete secCamera[i];
+			secCamera[i] = nullptr;
+		}
+		secCamera.clear();
+		RespawnCameras(cam);
+	}
 }
 
 void Map::Draw(XMMATRIX _view, XMMATRIX _projection, AmbientLight* _ambLight, DirectionalLight* _dirLight, PointLight* _ptLight)
@@ -190,8 +211,8 @@ void Map::Clean()
 		secCamera[i] = nullptr;
 	}
 	secCamera.clear();
-}
-
+} 
+ 
 void Map::PlaceGroundFloor(int _row, int _column, std::map<Constants::Models, ObjFileModel*>& models)
 {
 	bricks.push_back(new MapBrick(gfx, pDevice, pImmContext));
@@ -201,6 +222,46 @@ void Map::PlaceGroundFloor(int _row, int _column, std::map<Constants::Models, Ob
 	bricks.back()->SetPosition(_row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), 0.0f, _column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
 	bricks.back()->CalculateBoundingBoxWorldPos();
 	bricksNumber++;
+}
+
+void Map::RespawnCameras(ObjFileModel* model)
+{
+	for (int row = 0; row < height; row++)
+		for (int column = 0; column < width; column++)
+		{
+			switch (gridMap[row][column])
+			{
+			case 'A':   //Cam 1
+				secCamera.push_back(new SecurityCamera(gfx, pDevice, pImmContext));
+				secCamera.back()->LoadObjModel(model, Constants::reflectVS, Constants::reflectPS, Constants::skyboxTX);
+				secCamera.back()->sphere.CalculateModelCentrePoint(secCamera.back()->GetModel()->GetVertexBuffer());
+				secCamera.back()->sphere.CalculateBoundingSphereRadius(secCamera.back()->GetModel()->GetVertexBuffer(), secCamera.back()->GetScaleFloat3().x);
+				secCamera.back()->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), bricks.back()->GetScaleFloat3().y * secCamera.back()->sphere.radius, column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
+				secCamera.back()->SetRotation(-30.0f, -45.0f, 0.0f);
+				secCamera.back()->SetStartRot(secCamera.back()->GetRotationFloat3().x, secCamera.back()->GetRotationFloat3().y, secCamera.back()->GetRotationFloat3().z);
+				break;
+			case 'B':  //Cam 2
+				secCamera.push_back(new SecurityCamera(gfx, pDevice, pImmContext));
+				secCamera.back()->LoadObjModel(model, Constants::reflectVS, Constants::reflectPS, Constants::skyboxTX);
+				secCamera.back()->sphere.CalculateModelCentrePoint(secCamera.back()->GetModel()->GetVertexBuffer());
+				secCamera.back()->sphere.CalculateBoundingSphereRadius(secCamera.back()->GetModel()->GetVertexBuffer(), secCamera.back()->GetScaleFloat3().x);
+				secCamera.back()->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), bricks.back()->GetScaleFloat3().y * secCamera.back()->sphere.radius, column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
+				secCamera.back()->SetRotation(-30.0f, 0.0f, 0.0f);
+				secCamera.back()->SetStartRot(secCamera.back()->GetRotationFloat3().x, secCamera.back()->GetRotationFloat3().y, secCamera.back()->GetRotationFloat3().z);
+				break;
+			case 'C':  //Cam 3
+				secCamera.push_back(new SecurityCamera(gfx, pDevice, pImmContext));
+				secCamera.back()->LoadObjModel(model, Constants::reflectVS, Constants::reflectPS, Constants::skyboxTX);
+				secCamera.back()->sphere.CalculateModelCentrePoint(secCamera.back()->GetModel()->GetVertexBuffer());
+				secCamera.back()->sphere.CalculateBoundingSphereRadius(secCamera.back()->GetModel()->GetVertexBuffer(), secCamera.back()->GetScaleFloat3().x);
+				secCamera.back()->SetPosition(row * bricks.back()->GetScaleFloat3().x * (bricks.back()->box.maxBound.x - bricks.back()->box.minBound.x), bricks.back()->GetScaleFloat3().y * secCamera.back()->sphere.radius, column * bricks.back()->GetScaleFloat3().z * (bricks.back()->box.maxBound.z - bricks.back()->box.minBound.z));
+				secCamera.back()->SetRotation(-30.0f, 45.0f, 0.0f);
+				secCamera.back()->SetStartRot(secCamera.back()->GetRotationFloat3().x, secCamera.back()->GetRotationFloat3().y, secCamera.back()->GetRotationFloat3().z);
+				break;
+			default:
+				break;
+			}
+		}
 }
 
 int Map::GetBrickNumber()

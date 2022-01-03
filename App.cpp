@@ -4,7 +4,7 @@
 
 App::App()
 	:
-	wnd(new Window(800, 600, "DirectX_Game")),
+	wnd(new Window(1280, 720, "DirectX_Game")),
     currentWidth(wnd->GetWidth()),
     currentHeight(wnd->GetHeight())
 { 
@@ -74,12 +74,8 @@ App::App()
 }
 
 App::~App()
-{
-    if (map != nullptr)
-    {
-        delete map;
-        map = nullptr;
-    }
+{ 
+    //UI
     if (framerateText != nullptr)
     {
         delete framerateText;
@@ -105,13 +101,48 @@ App::~App()
         delete victoryText;
         victoryText = nullptr;
     }
+    //Player
+    if (player != nullptr)
+    {
+        delete player;
+        player = nullptr;
+    }
+    //Skybox
+    if (skybox != nullptr)
+    {
+        delete skybox;
+        skybox = nullptr;
+    }
+    //Map
+    if (map != nullptr)
+    {
+        delete map;
+        map = nullptr;
+    }
+    //Lights
+    if (ambientLight != nullptr)
+    {
+        delete ambientLight;
+        ambientLight = nullptr;
+    }
+    if (directionalLight != nullptr)
+    {
+        delete directionalLight;
+        directionalLight = nullptr;
+    }
+    if (pointLight != nullptr)
+    {
+        delete pointLight;
+        pointLight = nullptr;
+    }
+    //Models
     std::map<Constants::Models, ObjFileModel*>::iterator it;
     for (it = models.begin(); it != models.end(); it++)
     { 
         delete it->second;
         it->second = nullptr;
     }
-    //Bindables clean up
+    //Bindables
     VertexShader::GetInstance()->Clean();
     PixelShader::GetInstance()->Clean();
     Textures::GetInstance()->Clean(); 
@@ -226,7 +257,7 @@ void App::UpdateRender()
     crosshair->AddText(".", -0.0413f, 0.066f, 0.08f);
     crosshair->RenderText();        
 
-    healthText->AddText("Health: " + std::to_string(player->GetHealth()) + "%", -1.0f, -0.9f, 0.08f);
+    healthText->AddText("Health: " + std::to_string(player->GetHealth()).substr(0, std::to_string(player->GetHealth()).find(".") + 3) + "%", -1.0f, -0.9f, 0.08f);
     healthText->RenderText();
 
     cameraDestroyedText->AddText("Destroyed cameras: " + std::to_string(3 - GameManager::GetCamerasNumber()) + "/3", -0.315f, 1.0f, 0.06f);

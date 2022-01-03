@@ -176,13 +176,13 @@ void GameObject::SetLookAtPos(XMFLOAT3 _lookAtPos)
     float pitch = 0.0f;
     if (_lookAtPos.y != 0.0f)
     {
-        const float distance = sqrt(_lookAtPos.x * _lookAtPos.x + _lookAtPos.z * _lookAtPos.z);
-        pitch = atan(_lookAtPos.y / distance);
+        float distance = (float)sqrt(_lookAtPos.x * _lookAtPos.x + _lookAtPos.z * _lookAtPos.z);
+        pitch = (float)atan(_lookAtPos.y / distance);
     }
 
     float yaw = 0.0f;
     if (_lookAtPos.x != 0.0f)
-        yaw = atan(_lookAtPos.x / _lookAtPos.z);
+        yaw = (float)atan(_lookAtPos.x / _lookAtPos.z);
     if (_lookAtPos.z > 0) //Check if whe are on positive z (turn 180 degrees to from a triangle)
         yaw += XM_PI;
 

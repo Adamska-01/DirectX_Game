@@ -57,6 +57,7 @@ public:
 	//Getters
 	bool IsDead();
 	Model* GetModel();
+	XMFLOAT3 GetStartPos();
 
 	//Setters
 	void SetStartPos(float _x, float _y, float _z);

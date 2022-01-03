@@ -11,10 +11,19 @@ Projectile::Projectile(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContex
 	timeToDestroy = 5.0f;
 }
 
+Projectile::~Projectile()
+{
+	if (model != nullptr)
+	{
+		delete model;
+		model = nullptr;
+	}
+}
+
 void Projectile::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture)
 {
 	model->LoadObjModel(_obj, _VSshader, _PSshader, _texture);
-}
+} 
 
 void Projectile::UpdateLogic(float dt)
 {

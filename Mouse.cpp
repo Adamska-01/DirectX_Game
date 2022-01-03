@@ -18,7 +18,7 @@ HRESULT Mouse::ReadInputStates()
 {
     HRESULT hr = S_OK;
 
-    bool prevStates[] = { mouseStates.rgbButtons[0], mouseStates.rgbButtons[1] }; 
+    bool prevStates[] = { (bool)mouseStates.rgbButtons[0], (bool)mouseStates.rgbButtons[1] };
 
     hr = pMouseDevice->GetDeviceState(sizeof(mouseStates), (LPVOID)&mouseStates);
 

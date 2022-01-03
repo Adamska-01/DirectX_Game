@@ -19,6 +19,8 @@ private:
 
 public:
 	Projectile(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext);
+	~Projectile();
+
 	void LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::string _PSshader, std::string _texture);
 
 	void UpdateLogic(float dt);

@@ -6,9 +6,13 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
     :
     model(new Model(_gfx, _device, _immContext))
 {
+    //Stats
     health = 100.0f;
     speed = 13.0f;
     damage = 5.0f;
+
+    modColour = false;
+    startPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
     state = States::PATROLLING;
 
@@ -138,7 +142,7 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
 
 void Guard::AssignState(Player* p)
 {
-    float distanceFromPlayer = sqrt(pow((p->GetCamera()->GetPositionFloat3().x - pos.x), 2) + pow((p->GetCamera()->GetPositionFloat3().y - pos.y), 2) + pow((p->GetCamera()->GetPositionFloat3().z - pos.z), 2));
+    float distanceFromPlayer = (float)sqrt(pow((p->GetCamera()->GetPositionFloat3().x - pos.x), 2) + pow((p->GetCamera()->GetPositionFloat3().y - pos.y), 2) + pow((p->GetCamera()->GetPositionFloat3().z - pos.z), 2));
     if (state == States::PATROLLING || state == States::GOTOSTART)
     {
         //Attack if the player is too close 
@@ -158,7 +162,7 @@ void Guard::AssignState(Player* p)
     }
     if (state == States::GOTOSTART && distanceFromPlayer > minAlertDistance)
     {
-        float distanceFromStart = sqrt(pow((startPos.x - pos.x), 2) + pow((startPos.y - pos.y), 2) + pow((startPos.z - pos.z), 2));
+        float distanceFromStart = (float)sqrt(pow((startPos.x - pos.x), 2) + pow((startPos.y - pos.y), 2) + pow((startPos.z - pos.z), 2));
 
         //Go to patrolling state if the player is too far
         if (distanceFromStart <= 0.05f)
@@ -172,7 +176,7 @@ void Guard::AssignState(Player* p)
 void Guard::DealDamageToSelf(float _dmg)
 {
     health -= _dmg;
-    std::clamp(health, 0.0f, 100.0f);
+    health = std::clamp(health, 0.0f, 100.0f);
 }
 
 void Guard::CheckCollisionAndDamage(std::vector<Projectile*>const & _projectiles)
@@ -220,6 +224,11 @@ bool Guard::IsDead()
 Model* Guard::GetModel()
 {
     return model;
+}
+
+XMFLOAT3 Guard::GetStartPos()
+{
+    return startPos;
 }
 
 void Guard::SetStartPos(float _x, float _y, float _z)

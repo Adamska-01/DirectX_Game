@@ -38,6 +38,7 @@ public:
 private:
 	void Clean(); 
 	void PlaceGroundFloor(int _row, int _column, std::map<Constants::Models, ObjFileModel*>& models);
+	void RespawnCameras(ObjFileModel* model);
 public:
 	//Getters
 	int GetBrickNumber();

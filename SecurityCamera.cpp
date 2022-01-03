@@ -43,7 +43,7 @@ void SecurityCamera::UpdateLogic(float dt, Player* p)
 	SetRotation(startRot.x, startRot.y + rotRange * vl, startRot.z);
 
 	//Deal damage to player if too close
-	float distanceFromPlayer = sqrt(pow((p->GetCamera()->GetPositionFloat3().x - pos.x), 2) + pow((p->GetCamera()->GetPositionFloat3().y - pos.y), 2) + pow((p->GetCamera()->GetPositionFloat3().z - pos.z), 2));
+	float distanceFromPlayer = (float)sqrt(pow((p->GetCamera()->GetPositionFloat3().x - pos.x), 2) + pow((p->GetCamera()->GetPositionFloat3().y - pos.y), 2) + pow((p->GetCamera()->GetPositionFloat3().z - pos.z), 2));
 	if (distanceFromPlayer <= rangeToDamage)
 	{
 		p->DealDamageToSelf(damagePerSec * dt);
@@ -106,7 +106,7 @@ void SecurityCamera::CheckCollisionAndDamage(std::vector<Projectile*> const& _pr
 void SecurityCamera::DealDamageToSelf(float _dmg)
 {
 	health -= _dmg;
-	std::clamp(health, 0.0f, 100.0f);
+	health = std::clamp(health, 0.0f, 100.0f);
 }
 
 Model* SecurityCamera::GetModel()

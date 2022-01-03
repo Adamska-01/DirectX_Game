@@ -5,7 +5,7 @@
 class FrameTimer
 {
 private:
-	static constexpr int FPS = 100;
+	static constexpr int FPS = 60;
 	static constexpr float FRAMETIME = (double)1000 / FPS; //millisecond
 	static int currentFPS;
 	static float deltaTime;

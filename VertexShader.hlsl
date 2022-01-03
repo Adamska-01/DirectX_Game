@@ -19,16 +19,16 @@ struct VOutTX
 //Constant buffer
 cbuffer CBuffer0
 {
-    matrix worldViewProjection; //64 bytes
-    matrix worldView; //64 bytes
-    float4 colourModifier; //16 bytes
-    float4 directionalLightVector; //16 bytes
-    float4 directionalLightColour; //16 bytes
-    float4 ambientLightColour; //16 bytes
-    float4 pointLightPos; //16 bytes
-    float4 pointLightColour; //16 bytes
-    float3 pointLightAttenuation; //12 bytes
-    float range; //4 bytes 
+    matrix worldViewProjection;     //64 bytes
+    matrix worldView;               //64 bytes
+    float4 colourModifier;          //16 bytes
+    float4 directionalLightVector;  //16 bytes
+    float4 directionalLightColour;  //16 bytes
+    float4 ambientLightColour;      //16 bytes
+    float4 pointLightPos;           //16 bytes
+    float4 pointLightColour;        //16 bytes
+    float3 pointLightAttenuation;   //12 bytes
+    float range;                    //4 bytes 
 };// Total: 224 bytes;
  
  

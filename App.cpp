@@ -1,5 +1,6 @@
 #include "App.h"
 #include "CollisionHandler.h"
+#include "GameManager.h"
 
 App::App()
 	:
@@ -52,6 +53,7 @@ App::App()
     crosshair = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     healthText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     cameraDestroyedText = new Text2D(Constants::font2, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    victoryText = new Text2D(Constants::font2, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
 
     //Lights
     ambientLight = new AmbientLight();
@@ -66,6 +68,9 @@ App::App()
     pointLight->SetPosition(player->GetCamera()->GetPositionFloat3().x, player->GetCamera()->GetPositionFloat3().y, player->GetCamera()->GetPositionFloat3().z + 40.0f);
     pointLightStartPos = pointLight->GetPositionFloat3();
     defaultValue = 50.0f;
+
+    //Determines vicctory state
+    GameManager::GameManager(map->GetCameras().size());
 }
 
 App::~App()
@@ -94,6 +99,11 @@ App::~App()
     {
         delete cameraDestroyedText;
         cameraDestroyedText = nullptr;
+    }
+    if (victoryText != nullptr)
+    {
+        delete victoryText;
+        victoryText = nullptr;
     }
     std::map<Constants::Models, ObjFileModel*>::iterator it;
     for (it = models.begin(); it != models.end(); it++)
@@ -137,6 +147,13 @@ int App::Loop()
         //Game loop
         UpdateLogic(); 
         UpdateRender();
+
+
+        if (EndLoop()) //Exit Game
+        {
+            PostQuitMessage(0);
+            return 0;
+        }
     } 
 }
 
@@ -158,12 +175,17 @@ void App::UpdateLogic()
         currentWidth = wnd->GetWidth();
         currentHeight = wnd->GetHeight();
     }
+
+    GameManager::SetCamerasNumber(map->GetCameras().size());
     
     //--------------------UPDATE ENTITIES-------------------- 
-    player->UpdateLogic(FrameTimer::DeltaTime());
-    skybox->SetPosition(player->GetCamera()->GetPositionVector());
+    if (!GameManager::HasWon())
+    {
+        player->UpdateLogic(FrameTimer::DeltaTime());
+        skybox->SetPosition(player->GetCamera()->GetPositionVector());
 
-    map->UpdateLogic(FrameTimer::DeltaTime(), player); 
+        map->UpdateLogic(FrameTimer::DeltaTime(), player); 
+    }
 }
 
 void App::UpdateRender()
@@ -198,18 +220,26 @@ void App::UpdateRender()
     wnd->GetGraphics()->pImmediateContext->RSSetState(wnd->GetGraphics()->rastStateCullNone);
     wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendEnable, 0, 0xffffffff);
     
-    framerateText->AddText("FPS " + std::to_string(FrameTimer::Frames()), -1.0f, 1.0f, 0.05f);
+    framerateText->AddText("FPS: " + std::to_string(FrameTimer::Frames()), -1.0f, 1.0f, 0.05f);
     framerateText->RenderText();                    
 
-    crosshair->AddText(" ", -0.04f, 0.04f, 0.08f);
+    crosshair->AddText(".", -0.0413f, 0.066f, 0.08f);
     crosshair->RenderText();        
 
-    healthText->AddText("Health " + std::to_string(player->GetHealth()), -1.0f, -0.8f, 0.09f);
+    healthText->AddText("Health: " + std::to_string(player->GetHealth()) + "%", -1.0f, -0.9f, 0.08f);
     healthText->RenderText();
 
-    cameraDestroyedText->AddText("Cameras to destroy " + std::to_string(map->GetCameras().size()), -0.2f, 1.0f, 0.06f);
+    cameraDestroyedText->AddText("Destroyed cameras: " + std::to_string(3 - GameManager::GetCamerasNumber()) + "/3", -0.315f, 1.0f, 0.06f);
     cameraDestroyedText->RenderText();                    
     
+    //Victory Text
+    if (GameManager::HasWon())
+    {
+        victoryText->AddText("You Have Won!", -0.6f, 0.06f, 0.1f);
+        victoryText->AddText("(Press ESC to exit)", -0.95f, -0.05f, 0.1f);
+        victoryText->RenderText(); 
+    }
+
     wnd->GetGraphics()->pImmediateContext->OMSetBlendState(wnd->GetGraphics()->pAlphaBlendDisable, 0, 0xffffffff);
      
     //-----------------------END RENDER-----------------------  
@@ -218,4 +248,15 @@ void App::UpdateRender()
     //Update timer
     timer.EndClock();
     timer.DelayByFrameTime();
+}
+
+std::optional<int> App::EndLoop()
+{
+    if (GameManager::HasWon() && keyboard->IsKeyDown(DIK_ESCAPE))
+    {
+        return WM_QUIT;
+    }
+
+    //return an empty optional if not quiting 
+    return {};
 }

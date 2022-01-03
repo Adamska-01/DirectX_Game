@@ -27,6 +27,7 @@ public:
 private:
 	void UpdateLogic();
 	void UpdateRender();
+	std::optional<int> EndLoop(); //Additional logic to end loop
 
 private:
 	//Subsystems
@@ -47,6 +48,7 @@ private:
 	Text2D* crosshair;
 	Text2D* healthText;
 	Text2D* cameraDestroyedText;
+	Text2D* victoryText;
 
 	//Lights
 	AmbientLight* ambientLight;

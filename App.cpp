@@ -9,9 +9,9 @@ App::App()
     currentHeight(wnd->GetHeight())
 { 
     //Create models
-    models[Constants::Models::CUBE] = new ObjFileModel("Assets/Models/cube.obj", wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
-    models[Constants::Models::SPHERE] = new ObjFileModel("Assets/Models/Sphere.obj", wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
-    models[Constants::Models::CAMERA] = new ObjFileModel("Assets/Models/camera.obj", wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    models[Constants::Models::CUBE] = new ObjFileModel(Constants::cube, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    models[Constants::Models::SPHERE] = new ObjFileModel(Constants::sphere, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    models[Constants::Models::CAMERA] = new ObjFileModel(Constants::camera, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     
     //Create shaders
     VertexShader::GetInstance()->SetShaderAndIL(wnd->GetGraphics(), Constants::modelVS, Constants::ilModel, ARRAYSIZE(Constants::ilModel));

@@ -32,6 +32,7 @@ HRESULT Model::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std::stri
     SetTexture(_texture);
     //Load model
     pObject = _obj; 
+    if (pObject->filename == "FILE NOT LOADED") return S_FALSE;
      
     //Set up and create constant buffer
     D3D11_BUFFER_DESC cBufDesc;

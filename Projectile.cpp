@@ -42,7 +42,7 @@ void Projectile::UpdateLogic(float dt)
 
 void Projectile::UpdateConstantBF(XMMATRIX _view, XMMATRIX _projection)
 {
-	XMVECTOR colourMod = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR colourMod = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
 	model->UpdateConstantBf(_view, _projection, posVector, rotVector, scaleVector, colourMod);
 }
 

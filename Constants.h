@@ -31,6 +31,10 @@ namespace Constants
 	{
 		CUBE, SPHERE, CAMERA
 	};
+	//Models paths
+	static std::string cube = "Assets/Models/cube.obj";
+	static std::string sphere = "Assets/Models/Sphere.obj";
+	static std::string camera = "Assets/Models/camera.obj";
 	
 	//Input Layouts
 	static D3D11_INPUT_ELEMENT_DESC ilModel[] =

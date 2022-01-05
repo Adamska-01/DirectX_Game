@@ -9,7 +9,7 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
     //Stats
     health = 100.0f;
     speed = 13.0f;
-    damage = 5.0f;
+    damagePerSecond = 5.0f;
 
     modColour = false;
     startPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -17,12 +17,10 @@ Guard::Guard(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immCon
     state = States::PATROLLING;
 
     //Time-based variables 
-    currentTimePatrol = 0.0f;
-    currentTimeAttack = 0.0f;
+    currentTimePatrol = 0.0f; 
     currentTimeColourMod = 0.0f;
     currentTimeRespawn = 0.0f;
-    intervalPatrol = 3.0f;
-    intervalAttack = 1.5f;
+    intervalPatrol = 3.0f; 
     intervalToRespawn = 2.0f;
     intervalColourMod = 0.2f;
 
@@ -64,15 +62,9 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
         p->GetCamera()->CalculateBoundingSphereWorldPos();
         CalculateBoundingSphereWorldPos();
         if(CollisionHandler::SphereToSphereCollision(p->GetCamera()->sphere, sphere))
-        {
-            currentTimeAttack += dt;
-            if (currentTimeAttack >= intervalAttack)
-            {
-                //Attack player
-                p->DealDamageToSelf(damage);
-
-                currentTimeAttack = 0.0f;
-            }
+        { 
+            //Attack player
+            p->DealDamageToSelf(damagePerSecond * dt); 
         }
         else
         {
@@ -118,8 +110,7 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
             SetLookAtPos(lookat);
             state = States::PATROLLING;
             health = 100.0f; 
-            currentTimePatrol = 0.0f;
-            currentTimeAttack = 0.0f;
+            currentTimePatrol = 0.0f; 
             currentTimeColourMod = 0.0f;
             currentTimeRespawn = 0.0f; 
         }
@@ -148,8 +139,7 @@ void Guard::AssignState(Player* p)
         //Attack if the player is too close 
         if (distanceFromPlayer <= minAlertDistance)
         {
-            state = States::ATTACK;
-            currentTimeAttack = 0.0f;
+            state = States::ATTACK; 
         }
     }
     if (state == States::ATTACK)

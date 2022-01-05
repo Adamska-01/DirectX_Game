@@ -24,20 +24,18 @@ private:
 	//Stats
 	float health;
 	float speed;
-	float damage;
+	float damagePerSecond;
 	bool modColour;
 
 	XMFLOAT3 startPos;
 	float minAlertDistance;
 
 	//timer stuff
-	float intervalPatrol;
-	float intervalAttack;
+	float intervalPatrol; 
 	float intervalColourMod;
 	float intervalToRespawn;
 	float currentTimeRespawn;
-	float currentTimePatrol;
-	float currentTimeAttack;
+	float currentTimePatrol; 
 	float currentTimeColourMod;
 
 public:

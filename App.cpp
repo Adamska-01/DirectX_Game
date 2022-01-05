@@ -49,7 +49,7 @@ App::App()
     map->LoadMap(models, player);
 
     //UI
-    framerateText = new Text2D(Constants::font2, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
+    framerateText = new Text2D(" ", wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     crosshair = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     healthText = new Text2D(Constants::font1, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);
     cameraDestroyedText = new Text2D(Constants::font2, wnd->GetGraphics()->pDevice, wnd->GetGraphics()->pImmediateContext);

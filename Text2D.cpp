@@ -1,4 +1,5 @@
 #include "Text2D.h"
+#include "Debug.h"
 
 // constructor does not handle fails gracefully for simplicity, simply exits
 // track errors by looking at debug output or using debugger
@@ -17,7 +18,9 @@ Text2D::Text2D(string filename, ID3D11Device* device, ID3D11DeviceContext* conte
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;							// Allow CPU access
 	HRESULT hr = pD3DDevice->CreateBuffer(&bufferDesc, NULL, &pVertexBuffer);	// Create the buffer
 
-	if (FAILED(hr)) exit(0);
+#if _DEBUG
+	DBG_ASSERT_MSG_H(hr);
+#endif
 
 	// Load and compile pixel and vertex shaders - use vs_5_0 to target DX11 hardware only
 	ID3DBlob* VS, * PS, * error;
@@ -27,7 +30,9 @@ Text2D::Text2D(string filename, ID3D11Device* device, ID3D11DeviceContext* conte
 	{
 		OutputDebugStringA((char*)error->GetBufferPointer());
 		error->Release();
-		if (FAILED(hr))exit(0);
+#if _DEBUG
+		DBG_ASSERT_MSG_H(hr);
+#endif
 	}
 
 	hr = D3DX11CompileFromFile("PixelShader.hlsl", 0, 0, "TextPS", "ps_4_0", 0, 0, 0, &PS, &error, 0);
@@ -36,15 +41,21 @@ Text2D::Text2D(string filename, ID3D11Device* device, ID3D11DeviceContext* conte
 	{
 		OutputDebugStringA((char*)error->GetBufferPointer());
 		error->Release();
-		if (FAILED(hr)) exit(0);
+#if _DEBUG
+		DBG_ASSERT_MSG_H(hr);
+#endif
 	}
 
 	// Create shader objects
 	hr = pD3DDevice->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVShader);
-	if (FAILED(hr)) exit(0);
+#if _DEBUG
+	DBG_ASSERT_MSG_H(hr);
+#endif
 
 	hr = pD3DDevice->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPShader);
-	if (FAILED(hr)) exit(0);
+#if _DEBUG
+	DBG_ASSERT_MSG_H(hr);
+#endif
 
 	// Create and set the input layout object
 	D3D11_INPUT_ELEMENT_DESC iedesc[] =
@@ -54,11 +65,15 @@ Text2D::Text2D(string filename, ID3D11Device* device, ID3D11DeviceContext* conte
 	};
 
 	hr = pD3DDevice->CreateInputLayout(iedesc, ARRAYSIZE(iedesc), VS->GetBufferPointer(), VS->GetBufferSize(), &pInputLayout);
-	if (FAILED(hr)) exit(0);
+#if _DEBUG
+	DBG_ASSERT_MSG_H(hr);
+#endif
 
 	// Load in the font texture from given filename
 	hr = D3DX11CreateShaderResourceViewFromFile(pD3DDevice, filename.c_str(), NULL, NULL, &pTexture, NULL);
-	if (FAILED(hr)) exit(0);
+#if _DEBUG
+	DBG_ASSERT_MSG_H(hr);
+#endif
 
 	// Create sampler for texture
 	D3D11_SAMPLER_DESC sampler_desc;
@@ -70,6 +85,9 @@ Text2D::Text2D(string filename, ID3D11Device* device, ID3D11DeviceContext* conte
 	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	hr = pD3DDevice->CreateSamplerState(&sampler_desc, &pSampler);
+#if _DEBUG
+	DBG_ASSERT_MSG_H(hr);
+#endif
 
 	// Create 2 depth stencil states to turn Z buffer on and off
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
@@ -91,11 +109,15 @@ Text2D::Text2D(string filename, ID3D11Device* device, ID3D11DeviceContext* conte
 	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	hr = device->CreateDepthStencilState(&depthStencilDesc, &pDepthDisabledStencilState);
-	if (FAILED(hr)) exit(0);
+#if _DEBUG
+	DBG_ASSERT_MSG_H(hr);
+#endif
 
 	depthStencilDesc.DepthEnable = true;
 	hr = device->CreateDepthStencilState(&depthStencilDesc, &pDepthEnabledStencilState);
-	if (FAILED(hr)) exit(0);
+#if _DEBUG
+	DBG_ASSERT_MSG_H(hr);
+#endif
 }
 
 // add a string with position and size to the list

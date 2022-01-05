@@ -1,4 +1,5 @@
 #include "VertexShader.h" 
+#include "Debug.h"
 
 VertexShader* VertexShader::Instance = nullptr;
 
@@ -26,16 +27,23 @@ HRESULT VertexShader::SetShaderAndIL(Graphics* gfx, std::string _shader, D3D11_I
 		{
 			OutputDebugString((char*)error->GetBufferPointer());
 			error->Release();
-			if (FAILED(hr)) return hr;
+#if _DEBUG
+			DBG_ASSERT_MSG_H(hr);
+#endif
 		}
-
+		std::string s = "fd";
+		 
 		//Create shader objects
 		hr = GetDevice(gfx)->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &VSmap[_shader].vsShader);
-		if (FAILED(hr)) return hr;
+#if _DEBUG
+		DBG_ASSERT_MSG_H(hr);
+#endif
 
 		//Create input layout  
 		hr = GetDevice(gfx)->CreateInputLayout(il, _arraySize, VS->GetBufferPointer(), VS->GetBufferSize(), &VSmap[_shader].inputLayout);
-		if (FAILED(hr)) return hr;
+#if _DEBUG
+		DBG_ASSERT_MSG_H(hr);
+#endif
 
 		VS->Release();
 	}

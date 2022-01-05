@@ -1,49 +1,15 @@
 #include "Graphics.h"
+#include "Debug.h"
 
 Graphics::Graphics(HWND hWnd)
-{
-    //Create swap chain 
-    if (FAILED(CreateSwapChain(hWnd)))
-    {
-        DXTRACE_MSG("Failed to create Swap chain");
-        return;
-    }
-
-    //Create back buffer
-    if (FAILED(CreateBackBuffer()))
-    {
-        DXTRACE_MSG("Failed to create back buffer");
-        return;
-    }
-
-    //Create Z buffer
-    if (FAILED(CreateZBuffer(hWnd)))
-    {
-        DXTRACE_MSG("Failed to create Z buffer");
-        return;
-    }
-
-    //Create ViewPort
-    CreateViewPort(hWnd);
-  
-    //Create Blend states
-    if (FAILED(CreateBlendStates()))
-    {
-        DXTRACE_MSG("Failed to create Blend states");
-        return;
-    }
-    //Create depth stencil states
-    if (FAILED(CreateDepthStencilStates()))
-    {
-        DXTRACE_MSG("Failed to create depth stencil states");
-        return;
-    }
-    //Create rasterizer states
-    if (FAILED(CreateRasterizerStates()))
-    {
-        DXTRACE_MSG("Failed to create rasterizer states");
-        return;
-    }
+{ 
+    CreateSwapChain(hWnd);  
+    CreateBackBuffer();  
+    CreateZBuffer(hWnd); 
+    CreateViewPort(hWnd); 
+    CreateBlendStates(); 
+    CreateDepthStencilStates();
+    CreateRasterizerStates(); 
 }
 
 Graphics::~Graphics()
@@ -152,7 +118,9 @@ HRESULT Graphics::CreateSwapChain(HWND hWnd)
             break;
     }
 
-    if (FAILED(hr)) return hr;
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
 
     return hr;
 }
@@ -163,11 +131,15 @@ HRESULT Graphics::CreateBackBuffer()
 
     ID3D11Resource* pBackBuffer = nullptr;
     hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), (LPVOID*)&pBackBuffer);
-    if (FAILED(hr)) return hr;
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
     
     //Use back buffer texture pointer to create the renedr target view
     hr = pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pBackBufferRTView);
-    if (FAILED(hr)) return hr;
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
 
     //Clean up
     pBackBuffer->Release();
@@ -201,7 +173,9 @@ HRESULT Graphics::CreateZBuffer(HWND hWnd)
 
     ID3D11Texture2D* pZBufferTexture;
     hr = pDevice->CreateTexture2D(&tex2DDesc, NULL, &pZBufferTexture); 
-    if (FAILED(hr)) return hr;
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
 
     //Create the Z buffer
     D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
@@ -211,7 +185,9 @@ HRESULT Graphics::CreateZBuffer(HWND hWnd)
     dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
     hr = pDevice->CreateDepthStencilView(pZBufferTexture, &dsvDesc, &pZBuffer);
-    if (FAILED(hr)) return hr;
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
     pZBufferTexture->Release();
 
     //Set the render target view 
@@ -255,7 +231,9 @@ HRESULT Graphics::CreateBlendStates()
     bsdesc.IndependentBlendEnable = FALSE;
     bsdesc.AlphaToCoverageEnable = FALSE;
     hr = pDevice->CreateBlendState(&bsdesc, &pAlphaBlendEnable);
-
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
     return hr;
 }
 
@@ -269,9 +247,15 @@ HRESULT Graphics::CreateDepthStencilStates()
     dpthStDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     dpthStDesc.DepthFunc = D3D11_COMPARISON_LESS;
     hr = pDevice->CreateDepthStencilState(&dpthStDesc, &pDepthWriteSolid);
-    if (FAILED(hr)) return hr;
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
+    
     dpthStDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
     hr = pDevice->CreateDepthStencilState(&dpthStDesc, &pDepthWriteSkyBox);
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
 
     return hr;
 }
@@ -292,17 +276,25 @@ HRESULT Graphics::CreateRasterizerStates()
     rdesc.MultisampleEnable = true;
     rdesc.AntialiasedLineEnable = true;
     hr = pDevice->CreateRasterizerState(&rdesc, &rastStateCullNone);
-    if (FAILED(hr)) return hr;
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
 
     //Skybox stuff
     ZeroMemory(&rdesc, sizeof(D3D11_RASTERIZER_DESC));
     rdesc.FillMode = D3D11_FILL_SOLID;
     rdesc.CullMode = D3D11_CULL_BACK;
     hr = pDevice->CreateRasterizerState(&rdesc, &pRasterSolid);
-    if (FAILED(hr)) return hr;
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
+
     rdesc.FillMode = D3D11_FILL_SOLID;
     rdesc.CullMode = D3D11_CULL_FRONT;
     hr = pDevice->CreateRasterizerState(&rdesc, &pRasterSkyBox);
+#if _DEBUG
+    DBG_ASSERT_MSG_H(hr);
+#endif
 
     return hr;
 }

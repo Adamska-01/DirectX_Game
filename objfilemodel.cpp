@@ -2,6 +2,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "ObjFileModel.h"
+#include "Debug.h"
 
 
 // draw object
@@ -23,6 +24,9 @@ ObjFileModel::ObjFileModel(std::string fname, ID3D11Device* device, ID3D11Device
 	{
 		// file not loaded, check debug output;
 		filename="FILE NOT LOADED";
+#if _DEBUG
+		DBG_ASSERT_MSG_STR(filename);
+#endif
 		return;
 	}
 

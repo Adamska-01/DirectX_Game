@@ -1,4 +1,5 @@
 #include "Textures.h"
+#include "Debug.h"
 
 Textures* Textures::Instance = nullptr;
 
@@ -10,7 +11,9 @@ HRESULT Textures::SetTexture(Graphics* gfx, std::string _texture)
     {
         //Create Texture 
         hr = D3DX11CreateShaderResourceViewFromFile(GetDevice(gfx), _texture.c_str(), NULL, NULL, &textureMap[_texture], NULL);
-        if (FAILED(hr)) return hr;
+#if _DEBUG
+        DBG_ASSERT_MSG_H(hr);
+#endif
     }
 
     //Create Sampler

@@ -1,4 +1,5 @@
 #include "PixelShader.h"
+#include "Debug.h"
 
 PixelShader* PixelShader::Instance = nullptr;
 
@@ -26,12 +27,16 @@ HRESULT PixelShader::SetShader(Graphics* gfx, std::string _shader)
 		{
 			OutputDebugString((char*)error->GetBufferPointer());
 			error->Release();
-			if (FAILED(hr)) return hr;
+#if _DEBUG
+			DBG_ASSERT_MSG_H(hr);
+#endif
 		}
 
 		//Create shader objects
 		hr = GetDevice(gfx)->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &PSmap[_shader]);
-		if (FAILED(hr)) return hr;
+#if _DEBUG
+		DBG_ASSERT_MSG_H(hr);
+#endif
 
 		PS->Release();
 	}

@@ -16,7 +16,7 @@ public:
 	void Clean();
 
 	//Getters
-	inline std::map<std::string, ID3D11PixelShader*> GetTextureMap() { return PSmap; };
+	inline std::map<std::string, ID3D11PixelShader*> GetShaderMap() { return PSmap; };
 
 private:
 	PixelShader() {};

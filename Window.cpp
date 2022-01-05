@@ -165,7 +165,7 @@ LRESULT WINAPI Window::HandleMsgSetup(HWND _hWnd, UINT _msg, WPARAM _wParam, LPA
     return DefWindowProc(_hWnd, _msg, _wParam, _lParam);
 }
 
-//Adaptor from WIN32 call convention to C++ call convention 
+//Adapter from WIN32 call convention to C++ call convention 
 LRESULT WINAPI Window::HandleMsgSecond(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam)
 {
     //Retrieve ptr to window class

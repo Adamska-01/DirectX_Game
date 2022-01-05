@@ -30,5 +30,5 @@ public:
 
 public:
 	//Getters
-	inline std::map<std::string, mapData> GetTextureMap() { return VSmap; };
+	inline std::map<std::string, mapData> GetShaderMap() { return VSmap; };
 };

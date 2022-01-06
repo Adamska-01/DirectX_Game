@@ -24,6 +24,8 @@ private:
 	float currentTimeColourMod;
 	float intervalColourMod;
 
+	float time;
+
 public:
 	SecurityCamera(Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext);
 	~SecurityCamera();

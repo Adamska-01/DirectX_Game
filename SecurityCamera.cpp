@@ -20,6 +20,8 @@ SecurityCamera::SecurityCamera(Graphics* _gfx, ID3D11Device* _device, ID3D11Devi
 	//Timer stuff (colourMode)
 	currentTimeColourMod = 0.0f;
 	intervalColourMod = 0.2f;
+
+	time = 0.0f;
 }
 
 SecurityCamera::~SecurityCamera()
@@ -39,7 +41,8 @@ void SecurityCamera::LoadObjModel(ObjFileModel* _obj, std::string _VSshader, std
 void SecurityCamera::UpdateLogic(float dt, Player* p)
 {
 	//Rotation 
-	float vl = sin(FrameTimer::Time() / 1000.0f);
+	time += dt;
+	float vl = sin(time);
 	SetRotation(startRot.x, startRot.y + rotRange * vl, startRot.z);
 
 	//Deal damage to player if too close

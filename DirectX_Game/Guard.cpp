@@ -85,7 +85,8 @@ void Guard::UpdateLogic(float dt, Player* p, Map* _map)
     int length = _map->GetBrickNumber();
     for (int i = 0; i < length; i++)
     {
-        if (CollisionHandler::SphereToBoxCollision(sphere, _map->GetBricks()[i]->box))
+        auto intersection = CollisionHandler::SphereToBoxCollision(sphere, _map->GetBricks()[i]->box);
+        if (intersection.isColliding)
         {
             speed *= -1; 
             XMFLOAT3 lookat; XMStoreFloat3(&lookat, (GetPositionVector() + (GetForwardVector() * speed)));

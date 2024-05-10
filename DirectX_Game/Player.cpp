@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "CollisionHandler.h"
+#include "CollisionData.h"
 #include <algorithm>
+
 
 Player::Player(Map* _map, Keyboard* kbd, Mouse* ms, Graphics* _gfx, ID3D11Device* _device, ID3D11DeviceContext* _immContext, ObjFileModel* prjModel)
 	:
@@ -56,27 +58,32 @@ void Player::UpdateLogic(float dt)
 	currentTime += dt;
 
 	//Movement
+	auto movementVector = XMVectorZero();
 	if (keyboard->IsKeyPressed(DIK_W))
 	{
-		Forward(dt);
+		movementVector += camera->GetForwardVector();
 	}
 	if (keyboard->IsKeyPressed(DIK_A))
 	{
-		Left(dt);
+		movementVector += camera->GetLeftVector();
 	}
 	if (keyboard->IsKeyPressed(DIK_S))
 	{
-		BackWards(dt);
+		movementVector += camera->GetBackwardVector();
 	}
 	if (keyboard->IsKeyPressed(DIK_D))
 	{
-		Right(dt);
+		movementVector += camera->GetRightVector();
 	}
+
+	Move(XMVector3Normalize(movementVector), dt);
+
 	//Jump
 	if (keyboard->IsKeyDown(DIK_SPACE) && velocity.y == 0.0f)
 	{
 		Jump(jumpForce);
 	}
+
 	//Run
 	if (keyboard->IsKeyPressed(DIK_LSHIFT))
 	{
@@ -86,6 +93,7 @@ void Player::UpdateLogic(float dt)
 	{
 		speed = speedValue;
 	}
+
 	//Camera rotation 
 	XMFLOAT2 movement = mouse->GetMouseMovement();
 	camera->AdjustRotation(cameraSpeed * movement.x * dt, cameraSpeed * movement.y * dt, 0.0f);  
@@ -108,7 +116,6 @@ void Player::UpdateLogic(float dt)
 
 		currentTime = 0.0f;
 	}
-
 
 	//projectiles update 
 	int length = projectiles.size();
@@ -148,84 +155,45 @@ void Player::Draw(XMMATRIX _view, XMMATRIX _projection)
 	}
 }
 
-void Player::Forward(float dt)
+void Player::Move(const XMVECTOR& direction, float dt)
 {
-	XMVECTOR newPos = camera->GetPositionVector() + camera->GetForwardVector() * dt * speed;
-	//Calculate new bounding sphere
+	if (XMVector3Equal(direction, XMVectorZero()))
+		return; 
+
+	auto movement = direction * dt * speed;
+
+	auto newPos = camera->GetPositionVector() + movement;
+
+	// Calculate new bounding sphere
 	camera->CalculateBoundingSphereWorldPos(newPos);
 
 	int length = map->GetBrickNumber();
 	for (int i = 0; i < length; i++)
 	{
-		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
+		auto intersection = CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box);
+		if (intersection.isColliding)
+		{
 			return;
+		}
 	}
 	
-	//No collisions, move
-	camera->AdjustPosition(camera->GetForwardVector() * dt * speed);
-}
-
-void Player::BackWards(float dt)
-{
-	XMVECTOR newPos = camera->GetPositionVector() + camera->GetBackwardVector() * dt * speed;
-	//Calculate new bounding sphere
-	camera->CalculateBoundingSphereWorldPos(newPos);
-
-	int length = map->GetBrickNumber();
-	for (int i = 0; i < length; i++)
-	{
-		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
-			return;
-	}
-
-	//No collisions, move
-	camera->AdjustPosition(camera->GetBackwardVector() * dt * speed);
-}
-
-void Player::Left(float dt)
-{
-	XMVECTOR newPos = camera->GetPositionVector() + camera->GetLeftVector() * dt * speed;
-	//Calculate new bounding sphere
-	camera->CalculateBoundingSphereWorldPos(newPos);
-
-	int length = map->GetBrickNumber();
-	for (int i = 0; i < length; i++)
-	{
-		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
-			return;
-	}
-
-	//No collisions, move
-	camera->AdjustPosition(camera->GetLeftVector() * dt * speed);
-}
-
-void Player::Right(float dt)
-{
-	XMVECTOR newPos = camera->GetPositionVector() + camera->GetRightVector() * dt * speed;
-	//Calculate new bounding sphere
-	camera->CalculateBoundingSphereWorldPos(newPos);
-
-	int length = map->GetBrickNumber();
-	for (int i = 0; i < length; i++)
-	{
-		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
-			return;
-	}
-
-	//No collisions, move
-	camera->AdjustPosition(camera->GetRightVector() * dt * speed);
+	camera->AdjustPosition(movement);
 }
 
 void Player::Up(float dt)
 {
-	XMVECTOR newPos = camera->GetPositionVector() + XMVectorSet(0.0f, 0.9f * dt * jumpSpeed, 0.0f, 1.0f);
+	auto movement = XMVectorSet(0.0f, 0.9f * dt * jumpSpeed, 0.0f, 1.0f);
+	
+	auto newPos = camera->GetPositionVector() + XMVectorSet(0.0f, 0.9f * dt * jumpSpeed, 0.0f, 1.0f);
+
 	//Calculate new bounding sphere
 	camera->CalculateBoundingSphereWorldPos(newPos);
 
 	int length = map->GetBrickNumber();
 	for (int i = 0; i < length; i++)
 	{
-		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
+		auto intersection = CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box);
+		if (intersection.isColliding)
 		{
 			velocity.y = 0.0f; //stop jump
 			return;
@@ -233,27 +201,31 @@ void Player::Up(float dt)
 	}
 
 	//No collisions, move
-	camera->AdjustPosition(0.0f, 0.9f * dt * jumpSpeed, 0.0f);
+	camera->AdjustPosition(movement);
 }
 
 void Player::Down(float dt)
 {
-	XMVECTOR newPos = camera->GetPositionVector() + XMVectorSet(0.0f, -0.9f * dt * jumpSpeed, 0.0f, 1.0f);
+	auto movement = XMVectorSet(0.0f, -0.9f * dt * jumpSpeed, 0.0f, 1.0f);
+
+	auto newPos = camera->GetPositionVector() + movement;
+
 	//Calculate new bounding sphere
 	camera->CalculateBoundingSphereWorldPos(newPos);
 
 	int length = map->GetBrickNumber();
 	for (int i = 0; i < length; i++)
 	{
-		if (CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box))
+		auto intersection = CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box);
+		if (intersection.isColliding)
 		{
-			velocity.y = 0.0f; //Stop player from drowning to the ground
+			velocity.y = 0.0f; //stop jump
 			return;
 		}
 	}
 
 	//No collisions, move
-	camera->AdjustPosition(0.0f, -0.9f * dt * jumpSpeed, 0.0f);
+	camera->AdjustPosition(movement);
 }
 
 void Player::Jump(float jumpforce)

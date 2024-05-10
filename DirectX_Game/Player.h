@@ -50,10 +50,7 @@ public:
 
 private:
 	//Movement + collisions with map
-	void Forward(float dt);
-	void BackWards(float dt);
-	void Left(float dt);
-	void Right(float dt);
+	void Move(const XMVECTOR& direction, float dt);
 	void Up(float dt);
 	void Down(float dt);
 	void Jump(float jumpforce);

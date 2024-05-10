@@ -2,6 +2,7 @@
 #include "CollisionHandler.h"
 #include <algorithm>
 
+
 bool CollisionHandler::BoxToBoxCollision(BoundingBox a, BoundingBox b)
 { 
     return (a.minBound.x <= b.maxBound.x && a.maxBound.x >= b.minBound.x) &&
@@ -18,16 +19,23 @@ bool CollisionHandler::SphereToSphereCollision(BoundingSphere a, BoundingSphere 
     return distance < (a.radius + b.radius);
 }
 
-bool CollisionHandler::SphereToBoxCollision(BoundingSphere a, BoundingBox b)
+const CollisionData& CollisionHandler::SphereToBoxCollision(BoundingSphere a, BoundingBox b)
 {
-    // get box closest point to sphere center by clamping
-    float x = std::max(XMVectorGetX(b.minBoundV), std::min(XMVectorGetX(a.centreWorldPos), XMVectorGetX(b.maxBoundV)));
-    float y = std::max(XMVectorGetY(b.minBoundV), std::min(XMVectorGetY(a.centreWorldPos), XMVectorGetY(b.maxBoundV)));
-    float z = std::max(XMVectorGetZ(b.minBoundV), std::min(XMVectorGetZ(a.centreWorldPos), XMVectorGetZ(b.maxBoundV)));
-     
-    float distance = (float)sqrt((x - XMVectorGetX(a.centreWorldPos)) * (x - XMVectorGetX(a.centreWorldPos)) +
-        (y - XMVectorGetY(a.centreWorldPos)) * (y - XMVectorGetY(a.centreWorldPos)) +
-        (z - XMVectorGetZ(a.centreWorldPos)) * (z - XMVectorGetZ(a.centreWorldPos)));
+    // Get box closest point to sphere center by clamping
+    auto x = std::max(XMVectorGetX(b.minBoundV), std::min(XMVectorGetX(a.centreWorldPos), XMVectorGetX(b.maxBoundV)));
+    auto y = std::max(XMVectorGetY(b.minBoundV), std::min(XMVectorGetY(a.centreWorldPos), XMVectorGetY(b.maxBoundV)));
+    auto z = std::max(XMVectorGetZ(b.minBoundV), std::min(XMVectorGetZ(a.centreWorldPos), XMVectorGetZ(b.maxBoundV)));
 
-    return distance < a.radius;
+    // Calculate the vector from the center of the sphere to the closest point on the box
+    auto closestPoint = XMVectorSet(x, y, z, 0.0f);
+    auto sphereToClosestPoint = closestPoint - a.centreWorldPos;
+
+    auto distance = XMVectorGetX(XMVector3Length(sphereToClosestPoint));
+
+    return CollisionData
+    {
+        distance < a.radius,
+        distance,
+        XMVector3Normalize(sphereToClosestPoint)
+    };
 }

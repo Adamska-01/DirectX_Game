@@ -5,5 +5,6 @@ struct CollisionData
 {
     bool isColliding;
     float distance;
-    XMVECTOR normal;
+    float penetrationDepth;
+    XMVECTOR collisionPoint;
 };

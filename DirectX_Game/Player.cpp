@@ -158,7 +158,7 @@ void Player::Draw(XMMATRIX _view, XMMATRIX _projection)
 void Player::Move(const XMVECTOR& direction, float dt)
 {
 	if (XMVector3Equal(direction, XMVectorZero()))
-		return; 
+		return;
 
 	auto movement = direction * dt * speed;
 
@@ -167,16 +167,28 @@ void Player::Move(const XMVECTOR& direction, float dt)
 	// Calculate new bounding sphere
 	camera->CalculateBoundingSphereWorldPos(newPos);
 
-	int length = map->GetBrickNumber();
+	auto length = map->GetBrickNumber();
+	XMVECTOR totalCorrection = XMVectorZero();
+	auto collisions = 0;
 	for (int i = 0; i < length; i++)
 	{
 		auto intersection = CollisionHandler::SphereToBoxCollision(camera->sphere, map->GetBricks()[i]->box);
 		if (intersection.isColliding)
 		{
-			return;
+			XMVECTOR collisionNormal = XMVector3Normalize(intersection.collisionPoint - camera->GetPositionVector());
+
+			auto correction = collisionNormal * intersection.penetrationDepth;
+
+			totalCorrection += correction;
+
+			collisions++;
 		}
 	}
+
+	totalCorrection /= collisions != 0 ? collisions : 1;
 	
+	camera->AdjustPosition(-totalCorrection);
+
 	camera->AdjustPosition(movement);
 }
 

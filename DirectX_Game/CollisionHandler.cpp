@@ -31,11 +31,16 @@ const CollisionData& CollisionHandler::SphereToBoxCollision(BoundingSphere a, Bo
     auto sphereToClosestPoint = closestPoint - a.centreWorldPos;
 
     auto distance = XMVectorGetX(XMVector3Length(sphereToClosestPoint));
+    auto penetrationDepth = a.radius - distance; // Calculate penetration depth
+
+    // Calculate collision point on the sphere's surface
+    auto collisionPoint = a.centreWorldPos + XMVector3Normalize(sphereToClosestPoint) * a.radius;
 
     return CollisionData
     {
         distance < a.radius,
         distance,
-        XMVector3Normalize(sphereToClosestPoint)
+        penetrationDepth,
+        collisionPoint
     };
 }
